@@ -46,7 +46,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * 基于zookeeper的仲裁器调度
- * 
+ *
  * @author jianghang 2011-8-9 下午05:10:50
  */
 public class SelectZooKeeperArbitrateEvent implements SelectArbitrateEvent {
@@ -64,7 +64,7 @@ public class SelectZooKeeperArbitrateEvent implements SelectArbitrateEvent {
      * </pre>
      */
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
@@ -121,11 +121,11 @@ public class SelectZooKeeperArbitrateEvent implements SelectArbitrateEvent {
      * 算法:
      * 1. 创建对应的selected节点,标志selected已完成
      * </pre>
-     * 
+     *
      * @param pipelineId 同步流id
      */
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         String path = StagePathUtils.getSelectStage(data.getPipelineId(), data.getProcessId());
         data.setCurrNid(ArbitrateConfigUtils.getCurrentNid());
         // 序列化

@@ -28,7 +28,7 @@ import com.alibaba.otter.shared.common.model.config.channel.ChannelStatus;
 
 /**
  * 主导线程信号控制
- * 
+ *
  * @author jianghang 2011-8-9 下午05:16:16
  */
 public class MainStemArbitrateEvent implements ArbitrateEvent {
@@ -45,7 +45,7 @@ public class MainStemArbitrateEvent implements ArbitrateEvent {
      * </pre>
      */
     public void await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         ChannelStatus status = permitMonitor.getChannelPermit(true);
         boolean isRuning = check(pipelineId);

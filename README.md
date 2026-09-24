@@ -1,15 +1,24 @@
-<h1>环境搭建 & 打包</h1>
-<strong>环境搭建：</strong>
-<ol>
-<li>进入 $otter_home/lib 目录</li>
-<li>执行：bash install.sh</li>
-</ol>
-<strong>打包：</strong>
-<ol>
-<li>进入$otter_home目录</li>
-<li>执行：mvn clean install -Dmaven.test.skip -Denv=release</li>
-<li>发布包位置：$otter_home/target</li>
-</ol>
+# Otter Next
+
+基于 JDK 25、Spring Boot 4、Spring MVC 和内嵌 Tomcat 11 的数据同步管理平台。Manager 提供 Vue 3 管理控制台，Node 执行同步任务并提供文件下载服务。
+
+构建需要 JDK 25、Maven 3.9.12+、Node.js 24+ 和 npm：
+
+```bash
+export MVN=mvn
+bash lib/install.sh
+"$MVN" -B -ntp clean package -Dmaven.test.skip=true -Denv=release
+```
+
+Maven 自动构建前端并生成 Manager、Node 发布包，输出位于根目录 `target`。
+
+- [构建与发布](docs/jdk25-build.md)
+- [应用配置、管理页面与运行验证](docs/runtime-foundation.md)
+- [后续升级路线](docs/architecture-upgrade-plan.md)
+
+当前已验证管理端与节点启动、通信、配置 API、管理页面和文件下载。真实源库到目标库的数据同步与恢复场景按后续路线继续验收。
+
+以下为上游项目背景资料。
 
 <h1>
 <a name="%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF" class="anchor" href="#%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="octicon octicon-link"></span></a>项目背景</h1>

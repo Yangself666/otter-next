@@ -172,7 +172,7 @@ public abstract class AbstractDbDialect implements DbDialect {
         this.tables = OtterMigrateMap.makeSoftValueComputingMap(new Function<List<String>, Table>() {
 
             public Table apply(List<String> names) {
-                Assert.isTrue(names.size() == 2);
+                Assert.isTrue(names.size() == 2, "names.size() == 2 must satisfy isTrue");
                 try {
                     beforeFindTable(jdbcTemplate, names.get(0), names.get(0), names.get(1));
                     DdlUtilsFilter filter = getDdlUtilsFilter(jdbcTemplate, names.get(0), names.get(0), names.get(1));

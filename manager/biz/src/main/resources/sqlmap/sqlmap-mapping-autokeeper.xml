@@ -1,75 +1,58 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap namespace="com.alibaba.otter.manager.biz.config.autokeeper.dal.dataobject.AutoKeeperClusterDO">
-	<typeAlias alias="autoKeeperCluster"
-		type="com.alibaba.otter.manager.biz.config.autokeeper.dal.dataobject.AutoKeeperClusterDO" />
-
-	<resultMap id="autoKeeperClusterResult" class="autoKeeperCluster">
-		<result property="id" column="ID" />
-		<result property="clusterName" column="CLUSTER_NAME" />
-		<result property="serverList" column="SERVER_LIST" />
-		<result property="description" column="DESCRIPTION" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-	
-
-	<!-- all columns -->
-	<sql id="allAutoKeeperClusterColumns">ID,CLUSTER_NAME,SERVER_LIST,DESCRIPTION,GMT_CREATE,GMT_MODIFIED</sql>
-	
-	
-	<select id="findAutoKeeperClusterById" resultMap="autoKeeperClusterResult" parameterClass="long">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.config.autokeeper.dal.dataobject.AutoKeeperClusterDO">
+    <resultMap id="autoKeeperClusterResult" type="autoKeeperCluster">
+        <result property="id" column="ID" />
+        <result property="clusterName" column="CLUSTER_NAME" />
+        <result property="serverList" column="SERVER_LIST" />
+        <result property="description" column="DESCRIPTION" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <!-- all columns -->
+    <sql id="allAutoKeeperClusterColumns">ID,CLUSTER_NAME,SERVER_LIST,DESCRIPTION,GMT_CREATE,GMT_MODIFIED</sql>
+    <select id="findAutoKeeperClusterById" resultMap="autoKeeperClusterResult" parameterType="long">
 		select
 		<include refid="allAutoKeeperClusterColumns" />
-		from AUTOKEEPER_CLUSTER where ID = #value#
+		from AUTOKEEPER_CLUSTER where ID = #{value}
 	</select>
-	
-	<select id="listAutoKeeperClusters" resultMap="autoKeeperClusterResult">
+    <select id="listAutoKeeperClusters" resultMap="autoKeeperClusterResult">
 		select
 		<include refid="allAutoKeeperClusterColumns" />
-		from AUTOKEEPER_CLUSTER 
-		ORDER BY ID ASC 
-		<dynamic>
-			<isNotEmpty property="offset">
-				<isNotEmpty property="length">
-					limit #offset#, #length#
-				</isNotEmpty>
-			</isNotEmpty>
-		</dynamic>
-	</select>
-	
-	
-	<insert id="insertAutoKeeperCluster" parameterClass="autoKeeperCluster">
+		from AUTOKEEPER_CLUSTER
+		ORDER BY ID ASC
+		<trim>
+            <if test="offset != null">
+                <if test="length != null">
+					limit #{offset}, #{length}
+				</if>
+            </if>
+        </trim>
+    </select>
+    <insert id="insertAutoKeeperCluster" parameterType="autoKeeperCluster">
 		insert into AUTOKEEPER_CLUSTER
 		(CLUSTER_NAME,SERVER_LIST,DESCRIPTION,GMT_CREATE,GMT_MODIFIED)
-		values (#clusterName#,#serverList#,#description#,now(),now())
+		values (#{clusterName},#{serverList},#{description},now(),now())
 	</insert>
-	
-
-	<update id="updateAutoKeeperCluster" parameterClass="autoKeeperCluster">
+    <update id="updateAutoKeeperCluster" parameterType="autoKeeperCluster">
 		update AUTOKEEPER_CLUSTER
 		set
-		CLUSTER_NAME=#clusterName#,
-		SERVER_LIST=#serverList#,
-		DESCRIPTION=#description#,
+		CLUSTER_NAME=#{clusterName},
+		SERVER_LIST=#{serverList},
+		DESCRIPTION=#{description},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#  
+		WHERE ID = #{id}
 	</update>
- 
-	<delete id="deleteAutoKeeperClusterById" parameterClass="long">
-    	delete from AUTOKEEPER_CLUSTER where ID = #value#
+    <delete id="deleteAutoKeeperClusterById" parameterType="long">
+        delete from AUTOKEEPER_CLUSTER where ID = #{value}
     </delete>
-    
-    <select id="getAutoKeeperClusterCount" resultClass="Integer">
-		select count(*) from AUTOKEEPER_CLUSTER 
-		<dynamic prepend="where">
-			<isNotEmpty property="searchKey">
-				NAME like concat('%',replace(#searchKey#,'_','\_'),'%')
-				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
-			</isNotEmpty>
-		</dynamic>
-	</select>
-
-</sqlMap>  
+    <select id="getAutoKeeperClusterCount" resultType="Integer">
+		select count(*) from AUTOKEEPER_CLUSTER
+		<trim prefix="where" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+				NAME like concat('%',replace(#{searchKey},'_','\_'),'%')
+				or ID like concat('%',replace(#{searchKey},'_','\_'),'%')
+			</if>
+        </trim>
+    </select>
+</mapper>

@@ -67,24 +67,7 @@
 			<groupId>de.schlichtherle</groupId>
 			<artifactId>truezip</artifactId>
 		</dependency>
-		
-		<!-- jetty -->
-		<dependency>
-		  <groupId>org.eclipse.jetty</groupId>
-		  <artifactId>jetty-servlet</artifactId>
-		</dependency>
-		<dependency>
-		  <groupId>org.eclipse.jetty</groupId>
-		  <artifactId>jetty-xml</artifactId>
-		</dependency>
-		<dependency>
-		  <groupId>org.eclipse.jetty</groupId>
-		  <artifactId>jetty-server</artifactId>
-		</dependency>
-		<dependency>
-		  <groupId>org.eclipse.jetty</groupId>
-		  <artifactId>jetty-http</artifactId>
-		</dependency>
+
 		<!-- test dependency -->
 		<dependency>
 			<groupId>org.jtester</groupId>

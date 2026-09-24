@@ -29,7 +29,7 @@ import com.alibaba.otter.shared.communication.model.arbitrate.StageSingleEvent;
 
 /**
  * 分发rpc的请求，根据不同的pipelineId分发到不同的{@link FastRpcStageController}实例上去
- * 
+ *
  * @author jianghang 2013-2-28 下午10:04:50
  * @version 4.1.7
  */
@@ -45,7 +45,7 @@ public class FastRpcStageEventDispatcher {
      * 接收rpc请求的调用
      */
     protected boolean onStageSingle(StageSingleEvent event) {
-        Assert.notNull(event.getPipelineId());
+        Assert.notNull(event.getPipelineId(), "event.getPipelineId() must satisfy notNull");
         // 根据pipeline找到对应的实例
         FastRpcStageController controller = ArbitrateFactory.getInstance(event.getPipelineId(),
                                                                          FastRpcStageController.class);
@@ -56,7 +56,7 @@ public class FastRpcStageEventDispatcher {
      * 触发通知
      */
     public boolean single(StageType stage, EtlEventData eventData) {
-        Assert.notNull(eventData);
+        Assert.notNull(eventData, "eventData must satisfy notNull");
         eventData.setCurrNid(ArbitrateConfigUtils.getCurrentNid());
 
         StageSingleEvent event = new StageSingleEvent(ArbitrateEventType.fastStageSingle);

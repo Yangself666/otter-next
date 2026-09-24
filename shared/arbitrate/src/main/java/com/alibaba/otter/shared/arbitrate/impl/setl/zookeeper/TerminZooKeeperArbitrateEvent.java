@@ -42,7 +42,7 @@ import com.alibaba.otter.shared.communication.model.arbitrate.StopChannelEvent;
 
 /**
  * 处理termin信号
- * 
+ *
  * @author jianghang 2011-8-9 下午04:39:20
  */
 public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
@@ -62,7 +62,7 @@ public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
      * </pre>
      */
     public TerminEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         TerminMonitor terminMonitor = ArbitrateFactory.getInstance(pipelineId, TerminMonitor.class);
         Long processId = terminMonitor.waitForProcess(); // 符合条件的processId
         if (logger.isDebugEnabled()) {
@@ -88,7 +88,7 @@ public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
      * 消耗掉所有的termin信号
      */
     public void exhaust(Long pipelineId) {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         TerminMonitor terminMonitor = ArbitrateFactory.getInstance(pipelineId, TerminMonitor.class);
         int size = terminMonitor.size();
         try {
@@ -112,7 +112,7 @@ public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
      * </pre>
      */
     public void ack(TerminEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         // 目前只有select模块需要发送ack信号，这里一旦收到一个信号后就删除对应的termin节点，后续可扩展
         // 删除termin节点
         String path = StagePathUtils.getTermin(data.getPipelineId(), data.getProcessId());
@@ -132,7 +132,7 @@ public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
      * 查询当前待处理的termin信号的总数
      */
     public int size(Long pipelineId) {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         TerminMonitor terminMonitor = ArbitrateFactory.getInstance(pipelineId, TerminMonitor.class);
         return terminMonitor.size();
@@ -148,7 +148,7 @@ public class TerminZooKeeperArbitrateEvent implements TerminArbitrateEvent {
         // 正向处理
         final TerminType type = data.getType();
         if (type.isNormal()) {
-            Assert.notNull(data.getProcessId());
+            Assert.notNull(data.getProcessId(), "data.getProcessId() must satisfy notNull");
             normalTerminProcess.process(data); // 单独处理
         } else if (type.isWarning()) {
             warningTerminProcess.process(data); // warn单独处理，不需要关闭相关的pipeline

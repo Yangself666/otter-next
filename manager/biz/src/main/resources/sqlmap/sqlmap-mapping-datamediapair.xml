@@ -1,130 +1,112 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap namespace="com.alibaba.otter.manager.biz.config.datamediapair.dal.dataobject.DataMediaPairDO">
-	<typeAlias alias="dataMediaPair"
-		type="com.alibaba.otter.manager.biz.config.datamediapair.dal.dataobject.DataMediaPairDO" />
-
-	<resultMap id="dataMediaPairResult" class="dataMediaPair">
-		<result property="id" column="ID" />
-		<result property="sourceDataMediaId" column="SOURCE_DATA_MEDIA_ID" />
-		<result property="targetDataMediaId" column="TARGET_DATA_MEDIA_ID" />
-		<result property="pullWeight" column="PULLWEIGHT" />
-		<result property="pushWeight" column="PUSHWEIGHT" />
-		<result property="filter" column="FILTER" />
-		<result property="resolver" column="RESOLVER" />
-		<result property="pipelineId" column="PIPELINE_ID" />
-		<result property="columnPairMode" column="COLUMN_PAIR_MODE" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-
-	<!-- all dataMediaPair columns -->
-	<sql id="allDataMediaPairColumns">ID,SOURCE_DATA_MEDIA_ID,TARGET_DATA_MEDIA_ID,PULLWEIGHT,PUSHWEIGHT,FILTER,RESOLVER,PIPELINE_ID,COLUMN_PAIR_MODE,GMT_CREATE,GMT_MODIFIED</sql>
-
-	<select id="findDataMediaPairById" resultMap="dataMediaPairResult" parameterClass="long">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.config.datamediapair.dal.dataobject.DataMediaPairDO">
+    <resultMap id="dataMediaPairResult" type="dataMediaPair">
+        <result property="id" column="ID" />
+        <result property="sourceDataMediaId" column="SOURCE_DATA_MEDIA_ID" />
+        <result property="targetDataMediaId" column="TARGET_DATA_MEDIA_ID" />
+        <result property="pullWeight" column="PULLWEIGHT" />
+        <result property="pushWeight" column="PUSHWEIGHT" />
+        <result property="filter" column="FILTER" />
+        <result property="resolver" column="RESOLVER" />
+        <result property="pipelineId" column="PIPELINE_ID" />
+        <result property="columnPairMode" column="COLUMN_PAIR_MODE" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <!-- all dataMediaPair columns -->
+    <sql id="allDataMediaPairColumns">ID,SOURCE_DATA_MEDIA_ID,TARGET_DATA_MEDIA_ID,PULLWEIGHT,PUSHWEIGHT,FILTER,RESOLVER,PIPELINE_ID,COLUMN_PAIR_MODE,GMT_CREATE,GMT_MODIFIED</sql>
+    <select id="findDataMediaPairById" resultMap="dataMediaPairResult" parameterType="long">
 		select
 		<include refid="allDataMediaPairColumns" />
-		from DATA_MEDIA_PAIR where ID = #value#
+		from DATA_MEDIA_PAIR where ID = #{value}
 	</select>
-	
-	<select id="getDataMediaPairCount" resultClass="Integer">
-		select count(*) from DATA_MEDIA_PAIR 
-		<dynamic prepend="where">
-			<isNotEmpty property="searchKey">
-			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
-			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
-			</isNotEmpty>
-		</dynamic>
-	</select>
-
-	<select id="listDataMediaPairs" resultMap="dataMediaPairResult">
+    <select id="getDataMediaPairCount" resultType="Integer">
+		select count(*) from DATA_MEDIA_PAIR
+		<trim prefix="where" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+			ID like concat('%',replace(#{searchKey},'_','\_'),'%')
+			</if>
+            <if test="pipelineId != null">AND PIPELINE_ID = #{pipelineId}</if>
+        </trim>
+    </select>
+    <select id="listDataMediaPairs" resultMap="dataMediaPairResult">
 		select
 		<include refid="allDataMediaPairColumns" />
-		from DATA_MEDIA_PAIR 
-		<dynamic prepend="where">
-			<isNotEmpty property="searchKey">
-			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
-			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
-			</isNotEmpty>
-		</dynamic>
-	
+		from DATA_MEDIA_PAIR
+		<trim prefix="where" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+			ID like concat('%',replace(#{searchKey},'_','\_'),'%')
+			</if>
+            <if test="pipelineId != null">AND PIPELINE_ID = #{pipelineId}</if>
+        </trim>
+
 		ORDER BY ID DESC
-		
-		<dynamic>
-			<isNotEmpty property="offset" >
-				<isNotEmpty property="length">
-					limit #offset#, #length#
-				</isNotEmpty>
-			</isNotEmpty>
-		</dynamic>
-	</select>
-	
-	<select id="listDataMediaPairByIds" resultMap="dataMediaPairResult" >
+
+		<trim>
+            <if test="offset != null">
+                <if test="length != null">
+					limit #{offset}, #{length}
+				</if>
+            </if>
+        </trim>
+    </select>
+    <select id="listDataMediaPairByIds" resultMap="dataMediaPairResult">
 		select
 		<include refid="allDataMediaPairColumns" />
 		from DATA_MEDIA_PAIR where ID in
-		<iterate open="(" close=")" conjunction=",">
-			#[]#
-		</iterate>
+		<foreach open="(" close=")" collection="(_parameter instanceof java.util.Map ? (_parameter.containsKey(&quot;array&quot;) ? array : list) : _parameter)" item="item" separator=",">
+			#{item}
+		</foreach>
 		ORDER BY ID DESC
 	</select>
-	
-	<select id="listDataMediaPairsByPipelineId" resultMap="dataMediaPairResult" parameterClass="long">
+    <select id="listDataMediaPairsByPipelineId" resultMap="dataMediaPairResult" parameterType="long">
 		select
 		<include refid="allDataMediaPairColumns" />
-		from DATA_MEDIA_PAIR where PIPELINE_ID = #value# ORDER BY ID DESC
+		from DATA_MEDIA_PAIR where PIPELINE_ID = #{value} ORDER BY ID DESC
 	</select>
-	
-	<select id="listDataMediaPairsByDataMediaId" resultMap="dataMediaPairResult" parameterClass="long">
+    <select id="listDataMediaPairsByDataMediaId" resultMap="dataMediaPairResult" parameterType="long">
 		select
 		<include refid="allDataMediaPairColumns" />
-		from DATA_MEDIA_PAIR where SOURCE_DATA_MEDIA_ID = #value# or TARGET_DATA_MEDIA_ID = #value# ORDER BY ID DESC
+		from DATA_MEDIA_PAIR where SOURCE_DATA_MEDIA_ID = #{value} or TARGET_DATA_MEDIA_ID = #{value} ORDER BY ID DESC
 	</select>
-
-	
-
-	<update id="updateDataMediaPair" parameterClass="dataMediaPair">
+    <update id="updateDataMediaPair" parameterType="dataMediaPair">
 		update DATA_MEDIA_PAIR
 		set
-		SOURCE_DATA_MEDIA_ID = #sourceDataMediaId#,
-		TARGET_DATA_MEDIA_ID = #targetDataMediaId#,
-		PULLWEIGHT = #pullWeight#,
-		PUSHWEIGHT = #pushWeight#,
-		FILTER = #filter#,
-		RESOLVER = #resolver#,
-		PIPELINE_ID = #pipelineId#,
-		COLUMN_PAIR_MODE=#columnPairMode#,
+		SOURCE_DATA_MEDIA_ID = #{sourceDataMediaId},
+		TARGET_DATA_MEDIA_ID = #{targetDataMediaId},
+		PULLWEIGHT = #{pullWeight},
+		PUSHWEIGHT = #{pushWeight},
+		FILTER = #{filter},
+		RESOLVER = #{resolver},
+		PIPELINE_ID = #{pipelineId},
+		COLUMN_PAIR_MODE=#{columnPairMode},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#
+		WHERE ID = #{id}
 	</update>
-	
-	<select id="checkDataMediaPairUnique" resultClass="Integer"
-		parameterClass="dataMediaPair">
+    <select id="checkDataMediaPairUnique" parameterType="dataMediaPair" resultType="Integer">
 		select count(*) from DATA_MEDIA_PAIR
 		where
-		DATA_MEDIA_PAIR.ID != #id#
+		DATA_MEDIA_PAIR.ID != #{id}
 		and DATA_MEDIA_PAIR.SOURCE_DATA_MEDIA_ID =
-		#sourceDataMediaId#
-		and DATA_MEDIA_PAIR.TARGET_DATA_MEDIA_ID = #targetDataMediaId#
-		and DATA_MEDIA_PAIR.PIPELINE_ID = #pipelineId#
+		#{sourceDataMediaId}
+		and DATA_MEDIA_PAIR.TARGET_DATA_MEDIA_ID = #{targetDataMediaId}
+		and DATA_MEDIA_PAIR.PIPELINE_ID = #{pipelineId}
 	</select>
-	
-	<insert id="insertDataMediaPair" parameterClass="dataMediaPair">
+    <insert id="insertDataMediaPair" parameterType="dataMediaPair">
 		insert into DATA_MEDIA_PAIR
 		(SOURCE_DATA_MEDIA_ID,TARGET_DATA_MEDIA_ID,PULLWEIGHT,PUSHWEIGHT,FILTER,RESOLVER,PIPELINE_ID,COLUMN_PAIR_MODE,GMT_CREATE,GMT_MODIFIED)
-		SELECT #sourceDataMediaId#,#targetDataMediaId#,#pullWeight#,#pushWeight#,#filter#,#resolver#,#pipelineId#,#columnPairMode#,now(),now() 
-		from dual 
-		WHERE not exists (select * from DATA_MEDIA_PAIR 
-		where DATA_MEDIA_PAIR.SOURCE_DATA_MEDIA_ID = #sourceDataMediaId# 
-		and DATA_MEDIA_PAIR.TARGET_DATA_MEDIA_ID = #targetDataMediaId# 
-		and DATA_MEDIA_PAIR.PIPELINE_ID = #pipelineId#); 
-		<selectKey keyProperty="id" resultClass="long">
+		SELECT #{sourceDataMediaId},#{targetDataMediaId},#{pullWeight},#{pushWeight},#{filter},#{resolver},#{pipelineId},#{columnPairMode},now(),now()
+		from dual
+		WHERE not exists (select * from DATA_MEDIA_PAIR
+		where DATA_MEDIA_PAIR.SOURCE_DATA_MEDIA_ID = #{sourceDataMediaId}
+		and DATA_MEDIA_PAIR.TARGET_DATA_MEDIA_ID = #{targetDataMediaId}
+		and DATA_MEDIA_PAIR.PIPELINE_ID = #{pipelineId});
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			select last_insert_id()
 		</selectKey>
-	</insert>
-<!-- 
+    </insert>
+    <!--
 	<insert id="insertDataMediaPair" parameterClass="dataMediaPair">
 		insert into DATA_MEDIA_PAIR
 		(SOURCE_DATA_MEDIA_ID,TARGET_DATA_MEDIA_ID,PULLWEIGHT,PUSHWEIGHT,FILTER,RESOLVER,PIPELINE_ID,GMT_CREATE, GMT_MODIFIED)
@@ -135,8 +117,7 @@
 		</selectKey>
 	</insert>
  -->
-	<delete id="deleteDataMediaPairById" parameterClass="long"><![CDATA[
-    	delete from DATA_MEDIA_PAIR where ID = #value#
-    ]]></delete>
-
-</sqlMap>  
+    <delete id="deleteDataMediaPairById" parameterType="long">
+        delete from DATA_MEDIA_PAIR where ID = #{value}
+    </delete>
+</mapper>

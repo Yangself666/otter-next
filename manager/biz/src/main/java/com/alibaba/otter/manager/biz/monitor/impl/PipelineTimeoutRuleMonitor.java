@@ -19,7 +19,7 @@ package com.alibaba.otter.manager.biz.monitor.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;

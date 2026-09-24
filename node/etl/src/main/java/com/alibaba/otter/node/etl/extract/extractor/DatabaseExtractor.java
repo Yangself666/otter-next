@@ -66,7 +66,7 @@ import com.alibaba.otter.shared.etl.model.EventData;
 
 /**
  * 基于数据库的反查 , 使用多线程技术进行加速处理 {@linkplain DatabaseExtractWorker}
- * 
+ *
  * <pre>
  * 说明：
  *  1. 数据反查的总时间 = ( 数据记录数 / (poolsize + 1) ) * 每条记录查询的时间
@@ -74,7 +74,7 @@ import com.alibaba.otter.shared.etl.model.EventData;
  *  3. 编写{@linkplain DatabaseExtractWorker}代码时需注意，在适合的地方响应Thread.currentThread().isInterrupted(),在dbcp连接池和driver代码中是有支持
  *  4. 反查数据库，只会反查update=true的字段，按需反查，因为通过反查之后字段都会变为update=true，不必要的字段会进行数据同步 (modify by ljh at 2012-11-04)
  * </pre>
- * 
+ *
  * @author jianghang 2012-4-18 下午04:53:15
  * @version 4.0.2
  */
@@ -90,8 +90,8 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
     @Override
     public void extract(DbBatch dbBatch) throws ExtractException {
-        Assert.notNull(dbBatch);
-        Assert.notNull(dbBatch.getRowBatch());
+        Assert.notNull(dbBatch, "dbBatch must satisfy notNull");
+        Assert.notNull(dbBatch.getRowBatch(), "dbBatch.getRowBatch() must satisfy notNull");
         // 读取配置
         Pipeline pipeline = getPipeline(dbBatch.getRowBatch().getIdentity().getPipelineId());
         boolean mustDb = pipeline.getParameters().getSyncConsistency().isMedia();
@@ -263,7 +263,7 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
     /**
      * 反查数据异步处理单元，反查速度由主方法进行控制
-     * 
+     *
      * @author jianghang 2012-4-19 下午05:14:18
      * @version 4.0.2
      */

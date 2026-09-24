@@ -52,12 +52,12 @@ import com.google.common.collect.Lists;
 
 /**
  * 主备切换控制器，active的只有一位，所有的standy都有平等的选择权
- * 
+ *
  * <pre>
  * 1. active一旦产生，出现瞬断，在规定的时间内，其享有优先权
  * 2. active一旦产生，如果主动释放其active权利，其他的standby的节点就有机会立即参与选举
  * </pre>
- * 
+ *
  * @author jianghang 2012-10-1 下午02:19:22
  * @version 4.1.0
  */
@@ -199,7 +199,7 @@ public class MainstemMonitor extends ArbitrateLifeCycle implements Monitor {
 
     /**
      * 阻塞等待自己成为active，如果自己成为active，立马返回
-     * 
+     *
      * @throws InterruptedException
      */
     public void waitForActive() throws InterruptedException {
@@ -240,7 +240,7 @@ public class MainstemMonitor extends ArbitrateLifeCycle implements Monitor {
      * 更新mainStem的同步状态数据
      */
     public void single(MainStemEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         Long nid = ArbitrateConfigUtils.getCurrentNid();
         if (!check()) {
             return;

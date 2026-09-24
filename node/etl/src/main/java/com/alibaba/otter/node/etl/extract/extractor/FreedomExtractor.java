@@ -45,14 +45,14 @@ import com.alibaba.otter.shared.etl.model.EventType;
 
 /**
  * 自由之门，允许手工触发数据订正，解析这些记录
- * 
+ *
  * <pre>
  * buffer表结构：
  *  id , table_id ,  type , pk_data , gmt_create , gmt_modified
- *  
+ *
  * pk_data针对多主键时，使用char(1)进行分隔
  * </pre>
- * 
+ *
  * @author jianghang 2012-4-25 下午04:41:33
  * @version 4.0.2
  */
@@ -67,7 +67,7 @@ public class FreedomExtractor extends AbstractExtractor<DbBatch> {
     private static final String PK_DATA   = "pk_data";
 
     public void extract(DbBatch dbBatch) throws ExtractException {
-        Assert.notNull(dbBatch);
+        Assert.notNull(dbBatch, "dbBatch must satisfy notNull");
 
         // 读取配置
         Pipeline pipeline = getPipeline(dbBatch.getRowBatch().getIdentity().getPipelineId());

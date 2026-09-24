@@ -48,7 +48,7 @@ import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 统计模块远程接口
- * 
+ *
  * @author jianghang 2011-10-21 下午03:04:40
  * @version 4.0.0
  */
@@ -111,8 +111,8 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     }
 
     public void onDelayCount(DelayCountEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getCount());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getCount(), "event.getCount() must satisfy notNull");
 
         // 更新delay queue的计数器
         DelayCount count = event.getCount();
@@ -132,8 +132,8 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     }
 
     public void onThroughputStat(ThroughputStatEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getStats());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getStats(), "event.getStats() must satisfy notNull");
         if (statUnit <= 0) {
             for (ThroughputStat stat : event.getStats()) {
                 throughputStatService.createOrUpdateThroughput(stat);
@@ -163,8 +163,8 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     }
 
     public void onTableStat(TableStatEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getStats());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getStats(), "event.getStats() must satisfy notNull");
         for (TableStat stat : event.getStats()) {
             tableStatService.updateTableStat(stat);
         }

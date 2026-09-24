@@ -20,7 +20,7 @@ import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 
 /**
  * 解析一下DDL的完整语法
- * 
+ *
  * @author agapple 2017年4月6日 下午1:07:53
  * @since 4.2.14
  */
@@ -48,7 +48,7 @@ public class DdlUtils {
         private String              sourceSchema;
         private String              sourceTable;
 
-        public OtterMyqlOutputVisitor(Appendable appender, String sourceSchema, String sourceTable,
+        public OtterMyqlOutputVisitor(StringBuilder appender, String sourceSchema, String sourceTable,
                                       String targetSchema, String targetTable){
             super(appender);
             this.sourceSchema = sourceSchema;
@@ -122,7 +122,7 @@ public class DdlUtils {
                 print(' ');
             }
 
-            if (SQLCreateTableStatement.Type.GLOBAL_TEMPORARY.equals(x.getType())) {
+            if (x.isTemporary()) {
                 print0(ucase ? "TEMPORARY TABLE " : "temporary table ");
             } else {
                 print0(ucase ? "TABLE " : "table ");

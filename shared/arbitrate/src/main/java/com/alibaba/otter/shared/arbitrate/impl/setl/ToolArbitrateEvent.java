@@ -41,7 +41,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * 为setl提供辅助工具的event事件
- * 
+ *
  * @author jianghang 2011-10-18 上午10:17:18
  * @version 4.0.0
  */
@@ -52,12 +52,12 @@ public class ToolArbitrateEvent implements ArbitrateEvent {
 
     /**
      * 阻塞等待授权通过
-     * 
+     *
      * @param pipelineId
      * @throws InterruptedException
      */
     public void waitForPermit(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权

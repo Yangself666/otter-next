@@ -36,7 +36,7 @@ import com.alibaba.otter.shared.communication.model.arbitrate.StopNodeEvent;
 
 /**
  * 处理仲裁器事件的远程接口
- * 
+ *
  * @author jianghang 2011-11-24 下午09:19:09
  * @version 4.0.0
  */
@@ -66,7 +66,7 @@ public class ArbitrateRemoteServiceImpl implements ArbitrateRemoteService {
     }
 
     public void onStopNode(StopNodeEvent event) {
-        Assert.notNull(event);
+        Assert.notNull(event, "event must satisfy notNull");
 
         List<Channel> channels = channelService.listByNodeId(event.getNid(), ChannelStatus.START);
         for (Channel channel : channels) {// 重启一下对应的channel

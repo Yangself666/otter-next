@@ -23,10 +23,12 @@ import com.alibaba.otter.manager.biz.user.dal.dataobject.UserDO;
 
 /**
  * TODO Comment of UserDAO
- * 
+ *
  * @author simon
  */
 public interface UserDAO {
+
+    UserDO findByName(String name);
 
     public UserDO findUserById(Long userId);
 

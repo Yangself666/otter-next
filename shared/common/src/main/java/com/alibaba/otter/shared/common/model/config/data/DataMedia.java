@@ -29,7 +29,7 @@ import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
 
 /**
  * 同步数据存储介质
- * 
+ *
  * @author jianghang 2011-9-2 上午11:25:37
  */
 public class DataMedia<Source extends DataMediaSource> implements Serializable {
@@ -89,7 +89,7 @@ public class DataMedia<Source extends DataMediaSource> implements Serializable {
         }
 
         public String getSingleValue() {
-            Assert.notEmpty(values);
+            Assert.notEmpty(values, "values must satisfy notEmpty");
             return values.get(0);
         }
 

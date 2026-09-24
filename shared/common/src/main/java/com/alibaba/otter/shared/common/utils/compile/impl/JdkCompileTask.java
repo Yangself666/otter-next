@@ -59,7 +59,7 @@ public class JdkCompileTask<T> {
         compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             throw new IllegalStateException("Cannot find the system Java compiler. "
-                                            + "Check that your class path includes tools.jar");
+                                            + "Run with a full JDK that includes the jdk.compiler module");
         }
 
         this.classLoader = classLoader;

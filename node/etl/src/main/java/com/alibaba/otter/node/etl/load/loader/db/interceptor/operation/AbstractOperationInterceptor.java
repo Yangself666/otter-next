@@ -73,7 +73,7 @@ public abstract class AbstractOperationInterceptor extends AbstractLoadIntercept
     }
 
     private void init(final JdbcTemplate jdbcTemplate, final String markTableName, final String markTableColumn) {
-        int count = jdbcTemplate.queryForInt(MessageFormat.format(checkDataSql, markTableName, GLOBAL_THREAD_COUNT - 1));
+        int count = jdbcTemplate.queryForObject(MessageFormat.format(checkDataSql, markTableName, GLOBAL_THREAD_COUNT - 1), Integer.class);
         if (count != GLOBAL_THREAD_COUNT) {
             if (logger.isInfoEnabled()) {
                 logger.info("Interceptor: init " + markTableName + "'s data.");

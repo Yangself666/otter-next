@@ -43,8 +43,8 @@ public class ViewExtractor extends AbstractExtractor<DbBatch> {
 
     @Override
     public void extract(DbBatch dbBatch) throws ExtractException {
-        Assert.notNull(dbBatch);
-        Assert.notNull(dbBatch.getRowBatch());
+        Assert.notNull(dbBatch, "dbBatch must satisfy notNull");
+        Assert.notNull(dbBatch.getRowBatch(), "dbBatch.getRowBatch() must satisfy notNull");
 
         Pipeline pipeline = getPipeline(dbBatch.getRowBatch().getIdentity().getPipelineId());
         List<DataMediaPair> dataMediaPairs = pipeline.getPairs();

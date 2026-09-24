@@ -27,7 +27,7 @@ import com.alibaba.otter.shared.etl.model.DbBatch;
 
 /**
  * otter extractor工厂处理
- * 
+ *
  * @author jianghang 2012-4-18 下午04:09:15
  * @version 4.0.2
  */
@@ -37,7 +37,7 @@ public class OtterExtractorFactory implements BeanFactoryAware {
     private BeanFactory beanFactory;
 
     public void extract(DbBatch dbBatch) {
-        Assert.notNull(dbBatch);
+        Assert.notNull(dbBatch, "dbBatch must satisfy notNull");
         for (Object extractor : dbBatchExtractor) {
             OtterExtractor otterExtractor = null;
             if (extractor instanceof java.lang.String) {

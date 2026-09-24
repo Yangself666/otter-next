@@ -145,7 +145,7 @@ public class RowDataMemoryPipe extends AbstractMemoryPipe<DbBatch, MemoryPipeKey
 
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        Assert.notNull(downloadDir);
+        Assert.notNull(downloadDir, "downloadDir must satisfy notNull");
         NioUtils.create(new File(downloadDir), false, 3);
     }
 

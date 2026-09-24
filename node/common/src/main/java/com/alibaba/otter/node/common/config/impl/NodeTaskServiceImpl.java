@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
 
 /**
  * task节点对应的任务列表管理器
- * 
+ *
  * @author jianghang
  */
 public class NodeTaskServiceImpl implements NodeTaskService, InitializingBean {
@@ -449,7 +449,7 @@ public class NodeTaskServiceImpl implements NodeTaskService, InitializingBean {
     }
 
     public void addListener(NodeTaskListener listener) {
-        Assert.notNull(listener);
+        Assert.notNull(listener, "listener must satisfy notNull");
         this.listeners.add(listener);
         notifyListener(); // 触发一次listener推送
     }

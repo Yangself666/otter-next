@@ -16,57 +16,55 @@
 
 package com.alibaba.otter.shared.communication.core.impl.dubbo;
 
-import java.text.MessageFormat;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.common.extension.ExtensionLoader;
-import com.alibaba.dubbo.rpc.ProxyFactory;
-import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
+import org.apache.dubbo.config.ReferenceConfig;
+import org.apache.dubbo.remoting.Constants;
+import org.springframework.beans.factory.DisposableBean;
+
 import com.alibaba.otter.shared.communication.core.CommunicationEndpoint;
 import com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnection;
 import com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnectionFactory;
 import com.alibaba.otter.shared.communication.core.model.CommunicationParam;
-import com.google.common.base.Function;
-import com.google.common.collect.OtterMigrateMap;
 
 /**
  * dubbo rpc服务链接的factory
- * 
+ *
  * @author jianghang 2011-11-29 上午11:13:31
  * @version 4.0.0
  */
-public class DubboCommunicationConnectionFactory implements CommunicationConnectionFactory {
+public class DubboCommunicationConnectionFactory implements CommunicationConnectionFactory, DisposableBean {
 
-    private final String                       DUBBO_SERVICE_URL = "dubbo://{0}:{1}/endpoint?client=netty&codec=dubbo&serialization=java&lazy=true&iothreads=4&threads=50&connections=30&acceptEvent.timeout=50000&payload={2}";
-
-    private DubboProtocol                      protocol          = DubboProtocol.getDubboProtocol();
-    private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class)
-                                                                     .getExtension("javassist");
-
-    private Map<String, CommunicationEndpoint> connections       = null;
-    private int                                payload           = Constants.DEFAULT_PAYLOAD;
-
-    public DubboCommunicationConnectionFactory(){
-        connections = OtterMigrateMap.makeComputingMap(new Function<String, CommunicationEndpoint>() {
-
-            public CommunicationEndpoint apply(String serviceUrl) {
-                return proxyFactory.getProxy(protocol.refer(CommunicationEndpoint.class, URL.valueOf(serviceUrl)));
-            }
-        });
-    }
+    private final Map<String, ReferenceConfig<CommunicationEndpoint>> references = new ConcurrentHashMap<>();
+    private int payload = Constants.DEFAULT_PAYLOAD;
 
     public CommunicationConnection createConnection(CommunicationParam params) {
-        if (params == null) {
-            throw new IllegalArgumentException("param is null!");
-        }
+        if (params == null) throw new IllegalArgumentException("param is null!");
+        String serviceUrl = "dubbo://" + params.getIp() + ":" + params.getPort() + "/"
+            + CommunicationEndpoint.class.getName();
+        ReferenceConfig<CommunicationEndpoint> reference = references.computeIfAbsent(serviceUrl, address -> {
+            ReferenceConfig<CommunicationEndpoint> configured = new ReferenceConfig<>();
+            configured.setApplication(DubboCommunicationEndpoint.application());
+            configured.setInterface(CommunicationEndpoint.class);
+            configured.setUrl(address);
+            configured.setProxy("jdk");
+            configured.setCheck(false);
+            configured.setTimeout(50000);
+            configured.setParameters(Map.of("serialization", "hessian2", "client", "netty4",
+                "payload", String.valueOf(payload), "iothreads", "4"));
+            configured.get();
+            return configured;
+        });
+        return new DubboCommunicationConnection(params, reference.get());
+    }
 
-        // 构造对应的url， String.valueOf() 为避免数字包含千位符
-        String serviceUrl = MessageFormat.format(DUBBO_SERVICE_URL, params.getIp(), String.valueOf(params.getPort()), String.valueOf(payload));
-        CommunicationEndpoint endpoint = connections.get(serviceUrl);
-        return new DubboCommunicationConnection(params, endpoint);
-
+    @Override
+    public void destroy() {
+        references.values().forEach(reference -> {
+            if (!reference.getScopeModel().isDestroyed()) reference.destroy();
+        });
+        references.clear();
     }
 
     public void releaseConnection(CommunicationConnection connection) {

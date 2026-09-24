@@ -37,8 +37,8 @@ public class RemoteUrlBuilder implements InitializingBean {
     private String              urlFormat;
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(configClientService);
-        Assert.notNull(urlFormat);
+        Assert.notNull(configClientService, "configClientService must satisfy notNull");
+        Assert.notNull(urlFormat, "urlFormat must satisfy notNull");
     }
 
     public String getUrl(Long pipelineId, String filePath) {

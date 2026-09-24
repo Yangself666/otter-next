@@ -1,110 +1,92 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap
-	namespace="com.alibaba.otter.manager.biz.config.canal.dal.dataobject.CanalDO">
-	<typeAlias alias="canal"
-		type="com.alibaba.otter.manager.biz.config.canal.dal.dataobject.CanalDO" />
-
-	<resultMap id="canalResult" class="canal">
-		<result property="id" column="ID" />
-		<result property="name" column="NAME" />
-		<result property="description" column="DESCRIPTION" />
-		<result property="parameters" column="PARAMETERS" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-
-	<!-- all canal columns -->
-	<sql id="allCanalColumns">ID,NAME,DESCRIPTION,PARAMETERS,GMT_CREATE,GMT_MODIFIED
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.config.canal.dal.dataobject.CanalDO">
+    <resultMap id="canalResult" type="canal">
+        <result property="id" column="ID" />
+        <result property="name" column="NAME" />
+        <result property="description" column="DESCRIPTION" />
+        <result property="parameters" column="PARAMETERS" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <!-- all canal columns -->
+    <sql id="allCanalColumns">ID,NAME,DESCRIPTION,PARAMETERS,GMT_CREATE,GMT_MODIFIED
 	</sql>
-
-	<update id="updateCanal" parameterClass="canal"><![CDATA[
+    <update id="updateCanal" parameterType="canal">
 		update CANAL
 		set
-		DESCRIPTION=#description#,
-		PARAMETERS=#parameters#,
+		DESCRIPTION=#{description},
+		PARAMETERS=#{parameters},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#
-	]]></update>
-
-	<select id="checkCanalUnique" resultClass="Integer"
-		parameterClass="canal">
+		WHERE ID = #{id}
+	</update>
+    <select id="checkCanalUnique" parameterType="canal" resultType="Integer">
 		select count(*) from CANAL
-		where CANAL.ID != #id#
+		where CANAL.ID != #{id}
 		and
-		CANAL.NAME = #name#
+		CANAL.NAME = #{name}
 	</select>
-
-	<insert id="insertCanal" parameterClass="canal">
+    <insert id="insertCanal" parameterType="canal">
 		insert into CANAL
 		(NAME, DESCRIPTION, PARAMETERS,GMT_CREATE,GMT_MODIFIED)
 		SELECT
-		#name#,#description#,#parameters#,now(),now()
+		#{name},#{description},#{parameters},now(),now()
 		from dual
 		WHERE not exists (select * from CANAL
-		where CANAL.NAME = #name# );
-		<selectKey keyProperty="id" resultClass="long">
+		where CANAL.NAME = #{name} );
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			select
 			last_insert_id()
 		</selectKey>
-	</insert>
-
-	<delete id="deleteCanalById" parameterClass="long"><![CDATA[
-    	delete from CANAL where ID = #value#
-    ]]></delete>
-    
-    
-    <select id="findCanalByName" parameterClass="string" resultClass="canal">
+    </insert>
+    <delete id="deleteCanalById" parameterType="long">
+        delete from CANAL where ID = #{value}
+    </delete>
+    <select id="findCanalByName" parameterType="string" resultType="canal">
 		select
 		<include refid="allCanalColumns" />
 		from CANAL
-		where NAME = #name#
+		where NAME = #{name}
 	</select>
-  	
-	<select id="listCanalByIds" resultMap="canalResult">
+    <select id="listCanalByIds" resultMap="canalResult">
 		select
 		<include refid="allCanalColumns" />
 		from CANAL where ID in
-		<iterate open="(" close=")" conjunction=",">
-			#[]#
-		</iterate>
+		<foreach open="(" close=")" collection="(_parameter instanceof java.util.Map ? (_parameter.containsKey(&quot;array&quot;) ? array : list) : _parameter)" item="item" separator=",">
+			#{item}
+		</foreach>
 		ORDER BY ID DESC
 	</select>
-	
-	<select id="getCanalCount" resultClass="Integer">
-		select count(*) from CANAL 
-		<dynamic prepend="where">
-			<isNotEmpty property="searchKey">
-				NAME like concat('%',replace(#searchKey#,'_','\_'),'%')
-				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
-				or PARAMETERS like concat('%',replace(#searchKey#,'_','\_'),'%')
-			</isNotEmpty>
-		</dynamic>
-	</select>
-	
-	<select id="listCanals" resultMap="canalResult">
+    <select id="getCanalCount" resultType="Integer">
+		select count(*) from CANAL
+		<trim prefix="where" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+				NAME like concat('%',replace(#{searchKey},'_','\_'),'%')
+				or ID like concat('%',replace(#{searchKey},'_','\_'),'%')
+				or PARAMETERS like concat('%',replace(#{searchKey},'_','\_'),'%')
+			</if>
+        </trim>
+    </select>
+    <select id="listCanals" resultMap="canalResult">
 		select
 		<include refid="allCanalColumns" />
 		from CANAL
-		<dynamic prepend="where">
-			<isNotEmpty property="searchKey">
-				NAME like concat('%',replace(#searchKey#,'_','\_'),'%')
-				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
-				or PARAMETERS like concat('%',replace(#searchKey#,'_','\_'),'%')
-			</isNotEmpty>
-		</dynamic>
+		<trim prefix="where" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+				NAME like concat('%',replace(#{searchKey},'_','\_'),'%')
+				or ID like concat('%',replace(#{searchKey},'_','\_'),'%')
+				or PARAMETERS like concat('%',replace(#{searchKey},'_','\_'),'%')
+			</if>
+        </trim>
 
 		ORDER BY ID DESC
 
-		<dynamic>
-			<isNotEmpty property="offset">
-				<isNotEmpty property="length">
-					limit #offset#, #length#
-				</isNotEmpty>
-			</isNotEmpty>
-		</dynamic>
-	</select>
-
-</sqlMap>  
+		<trim>
+            <if test="offset != null">
+                <if test="length != null">
+					limit #{offset}, #{length}
+				</if>
+            </if>
+        </trim>
+    </select>
+</mapper>

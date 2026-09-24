@@ -30,7 +30,7 @@ import com.alibaba.otter.shared.common.model.config.enums.StageType;
 
 /**
  * 基于rpc方式实现的transform调度
- * 
+ *
  * @author jianghang 2012-9-29 上午10:59:24
  * @version 4.1.0
  */
@@ -40,7 +40,7 @@ public class TransformRpcArbitrateEvent implements TransformArbitrateEvent {
     private RpcStageEventDispatcher rpcStageEventDispatcher;
 
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
@@ -61,7 +61,7 @@ public class TransformRpcArbitrateEvent implements TransformArbitrateEvent {
     }
 
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         rpcStageEventDispatcher.single(StageType.TRANSFORM, data);// 通知下一个节点
     }
 

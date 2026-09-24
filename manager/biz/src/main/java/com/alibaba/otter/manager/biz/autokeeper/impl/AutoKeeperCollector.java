@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,7 +45,7 @@ import com.alibaba.otter.shared.common.utils.thread.NamedThreadFactory;
 
 /**
  * 对应的数据采集器
- * 
+ *
  * @author jianghang 2012-9-21 下午03:05:28
  * @version 4.1.0
  */

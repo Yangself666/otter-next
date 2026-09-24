@@ -33,7 +33,7 @@ import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于mysql的一些特殊处理定义
- * 
+ *
  * @author jianghang 2011-10-27 下午01:46:57
  * @version 4.0.0
  */
@@ -62,7 +62,7 @@ public class MysqlDialect extends AbstractDbDialect {
         this.shardColumns = OtterMigrateMap.makeSoftValueComputingMap(new Function<List<String>, String>() {
 
             public String apply(List<String> names) {
-                Assert.isTrue(names.size() == 2);
+                Assert.isTrue(names.size() == 2, "names.size() == 2 must satisfy isTrue");
                 try {
                     String result = DdlUtils.getShardKeyByDRDS(jdbcTemplate, names.get(0), names.get(0), names.get(1));
                     if (StringUtils.isEmpty(result)) {

@@ -17,48 +17,34 @@
 package com.alibaba.otter.node.etl;
 
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.alibaba.otter.shared.common.model.config.ConfigException;
 
 /**
  * Comment of OtterServiceLocator
- * 
+ *
  * @author xiaoqing.zhouxq
  * @author zebin.xuzb 重写 customizeBeanFactory，防止重复id
  */
 public class OtterContextLocator {
 
-    private static ClassPathXmlApplicationContext context       = null;
-    private static RuntimeException               initException = null;
+    private static volatile org.springframework.context.ConfigurableApplicationContext context;
 
-    static {
-        try {
-            context = new ClassPathXmlApplicationContext("applicationContext.xml") {
-
-                @Override
-                protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
-                    super.customizeBeanFactory(beanFactory);
-                    beanFactory.setAllowBeanDefinitionOverriding(false);
-                }
-            };
-        } catch (RuntimeException e) {
-            throw new ConfigException("ERROR ## ", e);
-        }
+    public static void initialize(org.springframework.context.ConfigurableApplicationContext applicationContext) {
+        context = applicationContext;
     }
 
     private static ApplicationContext getApplicationContext() {
         if (context == null) {
-            throw initException;
+            throw new IllegalStateException("Node application context has not been initialized");
         }
-
         return context;
     }
 
     public static void close() {
-        ((ClassPathXmlApplicationContext) context).close();
+        if (context != null) {
+            context.close();
+        }
     }
 
     public static OtterController getOtterController() {

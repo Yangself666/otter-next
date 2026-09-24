@@ -1,13 +1,12 @@
 <configuration scan="true" scanPeriod=" 5 seconds">
 
-	<jmxConfigurator />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
-	
+
 	<appender name="TASK-ROOT" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>otter</Key>
@@ -18,13 +17,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${otter}/${otter}.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${otter}/%d{yyyy-MM-dd}/${otter}-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<!-- or whenever the file size reaches 100MB -->
-						<maxFileSize>30MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>30MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -35,7 +31,7 @@
 			</appender>
 		</sift>
 	</appender>
-	
+
 	<appender name="DB_LOG" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>load</Key>
@@ -46,12 +42,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${load}/row_load.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${load}/%d{yyyy-MM-dd}/row_load-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<maxFileSize>512MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>512MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -60,7 +54,7 @@
 			</appender>
 		</sift>
 	</appender>
-	
+
 	<appender name="FILE_LOG" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>load</Key>
@@ -71,12 +65,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${load}/file_load.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${load}/%d{yyyy-MM-dd}/file_load-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<maxFileSize>512MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>512MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -85,7 +77,7 @@
 			</appender>
 		</sift>
 	</appender>
-	
+
 	<appender name="FILE_MISS_LOG" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>load</Key>
@@ -96,12 +88,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${load}/file_miss.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${load}/%d{yyyy-MM-dd}/file_miss-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<maxFileSize>512MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>512MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -110,7 +100,7 @@
 			</appender>
 		</sift>
 	</appender>
-	
+
 	<appender name="SELECTOR_LOG" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>select</Key>
@@ -121,12 +111,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${select}/row_select.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${select}/%d{yyyy-MM-dd}/row_select-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<maxFileSize>512MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>512MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -135,7 +123,7 @@
 			</appender>
 		</sift>
 	</appender>
-	
+
 	<appender name="FILE_WAIT" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>otter</Key>
@@ -146,12 +134,10 @@
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
 				<File>../logs/${otter}/wait.log</File>
 				<rollingPolicy
-					class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 					<!-- rollover daily -->
 					<fileNamePattern>../logs/${otter}/%d{yyyy-MM-dd}/wait-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-					<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-						<maxFileSize>512MB</maxFileSize>
-					</timeBasedFileNamingAndTriggeringPolicy>
+					<maxFileSize>512MB</maxFileSize>
 					<maxHistory>60</maxHistory>
 				</rollingPolicy>
 				<encoder>
@@ -160,52 +146,42 @@
 			</appender>
 		</sift>
 	</appender>
-	
-	<logger name="com.alibaba.otter.node.etl.load.loader.db.interceptor.log.LogLoadInterceptor" additivity="false">  
-        <level value="INFO" />  
+
+	<logger name="com.alibaba.otter.node.etl.load.loader.db.interceptor.log.LogLoadInterceptor" additivity="false" level="INFO">
         <appender-ref ref="DB_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.load.loader.db.FileLoadAction" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.etl.load.loader.db.FileLoadAction" additivity="false" level="INFO">
         <appender-ref ref="FILE_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.select.selector.canal.CanalEmbedSelector" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.etl.select.selector.canal.CanalEmbedSelector" additivity="false" level="INFO">
         <appender-ref ref="SELECTOR_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.common.pipe.impl.http.AttachmentHttpPipe" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.etl.common.pipe.impl.http.AttachmentHttpPipe" additivity="false" level="INFO">
         <appender-ref ref="FILE_MISS_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.conflict.impl.FileBatchConflictDetectServiceImpl" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.etl.conflict.impl.FileBatchConflictDetectServiceImpl" additivity="false" level="INFO">
         <appender-ref ref="FILE_MISS_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.deployer.OtterLauncher" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.deployer.OtterLauncher" additivity="false" level="INFO">
         <appender-ref ref="TASK-ROOT" />
     </logger>
-    <logger name="com.alibaba.dubbo.rpc.support.RpcUtils" additivity="false">  
-     	<level value="error" />  
+    <logger name="org.apache.dubbo.rpc.support.RpcUtils" additivity="false" level="error">
         <appender-ref ref="TASK-ROOT" />
     </logger>
-    <!-- 
-    <logger name="com.alibaba.otter.shared.common.utils.thread.ExecutorTemplate" additivity="false">  
-        <level value="INFO" />  
+    <!--
+    <logger name="com.alibaba.otter.shared.common.utils.thread.ExecutorTemplate" additivity="false" level="INFO">
         <appender-ref ref="FILE_WAIT" />
     </logger>
-    <logger name="com.alibaba.otter.canal.server.embeded.CanalServerWithEmbeded" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.canal.server.embeded.CanalServerWithEmbeded" additivity="false" level="INFO">
         <appender-ref ref="TASK-ROOT" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.select.SelectTask" additivity="false">  
-        <level value="INFO" />  
+    <logger name="com.alibaba.otter.node.etl.select.SelectTask" additivity="false" level="INFO">
         <appender-ref ref="TASK-ROOT" />
     </logger>
      -->
-     
+
 	<root level="WARN">
-		<!--  
+		<!--
 		<appender-ref ref="STDOUT"/>
 		-->
 		<appender-ref ref="TASK-ROOT" />

@@ -1,77 +1,60 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap namespace="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairDO">
-	<typeAlias alias="dataColumnPair"
-		type="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairDO" />
-
-	<resultMap id="dataColumnPairResult" class="dataColumnPair">
-		<result property="id" column="ID" />
-		<result property="sourceColumnName" column="SOURCE_COLUMN" />
-		<result property="targetColumnName" column="TARGET_COLUMN" />
-		<result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-
-	<!-- all dataMediaPair columns -->
-	<sql id="allDataColumnPairColumns">ID,SOURCE_COLUMN,TARGET_COLUMN,DATA_MEDIA_PAIR_ID,GMT_CREATE,GMT_MODIFIED</sql>
-
-	<select id="findDataColumnPairById" resultMap="dataColumnPairResult" parameterClass="long">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairDO">
+    <resultMap id="dataColumnPairResult" type="dataColumnPair">
+        <result property="id" column="ID" />
+        <result property="sourceColumnName" column="SOURCE_COLUMN" />
+        <result property="targetColumnName" column="TARGET_COLUMN" />
+        <result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <!-- all dataMediaPair columns -->
+    <sql id="allDataColumnPairColumns">ID,SOURCE_COLUMN,TARGET_COLUMN,DATA_MEDIA_PAIR_ID,GMT_CREATE,GMT_MODIFIED</sql>
+    <select id="findDataColumnPairById" resultMap="dataColumnPairResult" parameterType="long">
 		select
 		<include refid="allDataColumnPairColumns" />
-		from COLUMN_PAIR where ID = #value#
+		from COLUMN_PAIR where ID = #{value}
 	</select>
-	
-	<select id="listDataColumnPairByDataMediaPairId" resultMap="dataColumnPairResult" parameterClass="long">
+    <select id="listDataColumnPairByDataMediaPairId" resultMap="dataColumnPairResult" parameterType="long">
 		select
 		<include refid="allDataColumnPairColumns" />
-		from COLUMN_PAIR where DATA_MEDIA_PAIR_ID = #value#
+		from COLUMN_PAIR where DATA_MEDIA_PAIR_ID = #{value}
 	</select>
-	
-	<select id="listDataColumnPairByDataMediaPairIds" resultMap="dataColumnPairResult">
+    <select id="listDataColumnPairByDataMediaPairIds" resultMap="dataColumnPairResult">
 		select
 		<include refid="allDataColumnPairColumns" />
 		from COLUMN_PAIR where DATA_MEDIA_PAIR_ID in
-		<iterate open="(" close=")" conjunction=",">
-			#[]#
-		</iterate>
-	</select>
-	
-	
-
-	<update id="updateDataColumnPair" parameterClass="dataColumnPair">
+		<foreach open="(" close=")" collection="(_parameter instanceof java.util.Map ? (_parameter.containsKey(&quot;array&quot;) ? array : list) : _parameter)" item="item" separator=",">
+			#{item}
+		</foreach>
+    </select>
+    <update id="updateDataColumnPair" parameterType="dataColumnPair">
 		update COLUMN_PAIR
 		set
-		SOURCE_COLUMN = #sourceColumnName#,
-		TARGET_COLUMN = #targetColumnName#,
-		DATA_MEDIA_PAIR_ID = #dataMediaPairId#,
+		SOURCE_COLUMN = #{sourceColumnName},
+		TARGET_COLUMN = #{targetColumnName},
+		DATA_MEDIA_PAIR_ID = #{dataMediaPairId},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#
+		WHERE ID = #{id}
 	</update>
-	
-	
-	<insert id="insertDataColumnPair" parameterClass="dataColumnPair">
+    <insert id="insertDataColumnPair" parameterType="dataColumnPair">
 		insert into COLUMN_PAIR
 		(SOURCE_COLUMN,TARGET_COLUMN,DATA_MEDIA_PAIR_ID,GMT_CREATE, GMT_MODIFIED)
-		SELECT #sourceColumnName#,#targetColumnName#,#dataMediaPairId#,now(),now() 
-		from dual 
-		WHERE not exists (select * from COLUMN_PAIR 
-		where COLUMN_PAIR.SOURCE_COLUMN = #sourceColumnName# 
-		and COLUMN_PAIR.TARGET_COLUMN = #targetColumnName# 
-		and COLUMN_PAIR.DATA_MEDIA_PAIR_ID = #dataMediaPairId#); 
-		<selectKey keyProperty="id" resultClass="long">
+		SELECT #{sourceColumnName},#{targetColumnName},#{dataMediaPairId},now(),now()
+		from dual
+		WHERE not exists (select * from COLUMN_PAIR
+		where COLUMN_PAIR.SOURCE_COLUMN = #{sourceColumnName}
+		and COLUMN_PAIR.TARGET_COLUMN = #{targetColumnName}
+		and COLUMN_PAIR.DATA_MEDIA_PAIR_ID = #{dataMediaPairId});
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			select last_insert_id()
 		</selectKey>
-	</insert>
-
-	<delete id="deleteDataColumnPairById" parameterClass="long">
-    	delete from COLUMN_PAIR where ID = #value#
+    </insert>
+    <delete id="deleteDataColumnPairById" parameterType="long">
+        delete from COLUMN_PAIR where ID = #{value}
     </delete>
-    
-    <delete id="deleteDataColumnPairByDataMediaPairId" parameterClass="long">
-    	delete from COLUMN_PAIR where DATA_MEDIA_PAIR_ID = #value#
+    <delete id="deleteDataColumnPairByDataMediaPairId" parameterType="long">
+        delete from COLUMN_PAIR where DATA_MEDIA_PAIR_ID = #{value}
     </delete>
-
-</sqlMap>  
+</mapper>

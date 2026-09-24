@@ -51,7 +51,7 @@ import com.alibaba.otter.shared.communication.model.config.NotifyChannelEvent;
 
 /**
  * Config的remote接口处理
- * 
+ *
  * @author jianghang 2011-10-21 下午02:53:53
  * @version 4.0.0
  */
@@ -72,7 +72,7 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
     }
 
     public boolean notifyChannel(final Channel channel) {
-        Assert.notNull(channel);
+        Assert.notNull(channel, "channel must satisfy notNull");
         // 获取所有的Node节点
         NotifyChannelEvent event = new NotifyChannelEvent();
         event.setChannel(channel);
@@ -137,14 +137,14 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
      * 根据对应的工作节点机器id，获取相关的channel任务
      */
     public Channel onFindChannel(FindChannelEvent event) {
-        Assert.notNull(event);
+        Assert.notNull(event, "event must satisfy notNull");
         Long channelId = event.getChannelId();
         Long pipelineId = event.getPipelineId();
         Channel channel = null;
         if (channelId != null) {
             channel = channelService.findById(channelId);
         } else {
-            Assert.notNull(pipelineId);
+            Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
             channel = channelService.findByPipelineId(pipelineId);
         }
 
@@ -152,21 +152,21 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
     }
 
     public Node onFindNode(FindNodeEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getNid());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getNid(), "event.getNid() must satisfy notNull");
         return nodeService.findById(event.getNid());
     }
 
     public List<Channel> onFindTask(FindTaskEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getNid());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getNid(), "event.getNid() must satisfy notNull");
         // 同时查询start/pause状态的同步任务，因为在发布时重启jvm刚好在执行stopNode的restart指令，此时channel处于pause状态，丢失了任务命令
         return channelService.listByNodeId(event.getNid(), ChannelStatus.START, ChannelStatus.PAUSE);
     }
 
     public String onFindMedia(FindMediaEvent event) {
-        Assert.notNull(event);
-        Assert.notNull(event.getDataId());
+        Assert.notNull(event, "event must satisfy notNull");
+        Assert.notNull(event.getDataId(), "event.getDataId() must satisfy notNull");
         DataMatrix matrix = dataMatrixService.findByGroupKey(event.getDataId());
         return JsonUtils.marshalToString(matrix);
     }

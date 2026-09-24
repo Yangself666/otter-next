@@ -16,49 +16,70 @@
 
 package com.alibaba.otter.shared.communication.core.impl.dubbo;
 
-import java.text.MessageFormat;
+import java.util.Map;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.common.extension.ExtensionLoader;
-import com.alibaba.dubbo.rpc.Exporter;
-import com.alibaba.dubbo.rpc.ProxyFactory;
-import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
+import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.ProtocolConfig;
+import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.ServiceConfig;
+import org.apache.dubbo.remoting.Constants;
+
 import com.alibaba.otter.shared.communication.core.CommunicationEndpoint;
 import com.alibaba.otter.shared.communication.core.impl.AbstractCommunicationEndpoint;
 
 /**
  * 基于dubbo的endpoint实现,仅仅使用了dubb的rpc工具
- * 
+ *
  * @author jianghang 2011-11-29 上午11:08:29
  * @version 4.0.0
  */
 public class DubboCommunicationEndpoint extends AbstractCommunicationEndpoint {
 
-    private static final String             DUBBO_SERVICE_URL = "dubbo://127.0.0.1:{0}/endpoint?server=netty&codec=dubbo&serialization=java&heartbeat=5000&iothreads=4&threads=50&connections=30&payload={1}";
-    private DubboProtocol                   protocol          = DubboProtocol.getDubboProtocol();
-    private ProxyFactory                    proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension("javassist");
-
-    private Exporter<CommunicationEndpoint> exporter          = null;
-    private int                             port              = 2088;
-    private int                             payload           = Constants.DEFAULT_PAYLOAD;
+    private final org.apache.dubbo.rpc.model.ApplicationModel applicationModel =
+        org.apache.dubbo.rpc.model.ApplicationModel.defaultModel();
+    private ServiceConfig<CommunicationEndpoint> service;
+    private int port = 2088;
+    private int payload = Constants.DEFAULT_PAYLOAD;
 
     public DubboCommunicationEndpoint(){
-
     }
 
     public DubboCommunicationEndpoint(int port){
         this.port = port;
     }
 
-    public void initial() {
-        // 构造对应的url， String.valueOf() 为避免数字包含千位符
-        String url = MessageFormat.format(DUBBO_SERVICE_URL, String.valueOf(port), String.valueOf(payload));
-        exporter = protocol.export(proxyFactory.getInvoker(this, CommunicationEndpoint.class, URL.valueOf(url)));
+    static ApplicationConfig application() {
+        ApplicationConfig application = new ApplicationConfig(System.getProperty("appName", "otter"));
+        application.setQosEnable(false);
+        return application;
     }
 
-    public void destory() {
-        exporter.unexport();
+    public synchronized void initial() {
+        if (service != null) return;
+        ProtocolConfig protocol = new ProtocolConfig("dubbo", port);
+        protocol.setSerialization("hessian2");
+        protocol.setServer("netty4");
+        protocol.setThreads(50);
+        protocol.setPayload(payload);
+        ServiceConfig<CommunicationEndpoint> configured = new ServiceConfig<>();
+        configured.setApplication(application());
+        configured.setRegistry(new RegistryConfig(RegistryConfig.NO_AVAILABLE));
+        configured.setProtocol(protocol);
+        configured.setInterface(CommunicationEndpoint.class);
+        configured.setRef(this);
+        configured.setProxy("jdk");
+        configured.setParameters(Map.of("heartbeat", "5000", "iothreads", "4"));
+        configured.export();
+        service = configured;
+    }
+
+    public synchronized void destory() {
+        if (service != null) {
+            service.unexport();
+            service = null;
+        }
+        // 关闭应用级 RPC 资源，释放服务端端口及通信线程
+        if (!applicationModel.isDestroyed()) applicationModel.destroy();
     }
 
     // =============== setter / gettter ==================

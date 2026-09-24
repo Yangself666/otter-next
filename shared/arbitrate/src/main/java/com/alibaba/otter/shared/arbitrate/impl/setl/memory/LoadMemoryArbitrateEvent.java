@@ -34,7 +34,7 @@ import com.alibaba.otter.shared.common.model.config.enums.StageType;
 
 /**
  * 基于memory的仲裁器实现
- * 
+ *
  * @author jianghang 2012-9-27 下午10:05:08
  * @version 4.1.0
  */
@@ -44,7 +44,7 @@ public class LoadMemoryArbitrateEvent implements LoadArbitrateEvent {
     private TerminMemoryArbitrateEvent terminEvent;
 
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
@@ -68,7 +68,7 @@ public class LoadMemoryArbitrateEvent implements LoadArbitrateEvent {
     }
 
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         data.setEndTime(new Date().getTime());// 返回当前时间
         MemoryStageController stageController = ArbitrateFactory.getInstance(data.getPipelineId(),
                                                                              MemoryStageController.class);

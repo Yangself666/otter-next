@@ -42,7 +42,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DeadlockLoserDataAccessException;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -83,7 +83,7 @@ import com.alibaba.otter.shared.etl.model.RowBatch;
 
 /**
  * 数据库load的执行入口
- * 
+ *
  * @author jianghang 2011-10-31 下午03:17:43
  * @version 4.0.0
  */
@@ -108,7 +108,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
      * 返回结果为已处理成功的记录
      */
     public DbLoadContext load(RowBatch rowBatch, WeightController controller) {
-        Assert.notNull(rowBatch);
+        Assert.notNull(rowBatch, "rowBatch must satisfy notNull");
         Identity identity = rowBatch.getIdentity();
         DbLoadContext context = buildContext(identity);
 
@@ -187,7 +187,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
     /**
      * 分析整个数据，将datas划分为多个批次. ddl sql前的DML并发执行，然后串行执行ddl后，再并发执行DML
-     * 
+     *
      * @return
      */
     private boolean isDdlDatas(List<EventData> eventDatas) {
@@ -343,7 +343,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
     /**
      * 执行ddl的调用，处理逻辑比较简单: 串行调用
-     * 
+     *
      * @param context
      * @param eventDatas
      */
@@ -647,7 +647,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
                         error = null;
                         exeResult = ExecuteResult.SUCCESS;
-                    } catch (DeadlockLoserDataAccessException ex) {
+                    } catch (PessimisticLockingFailureException ex) {
                         error = new LoadException(ExceptionUtils.getFullStackTrace(ex),
                             DbLoadDumper.dumpEventDatas(splitDatas));
                         exeResult = ExecuteResult.RETRY;

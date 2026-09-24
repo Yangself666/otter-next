@@ -22,6 +22,10 @@
 			<artifactId>canal.instance.manager</artifactId>
 			<version>${otter_canal_version}</version>
 			<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>
@@ -33,6 +37,10 @@
 			<artifactId>canal.parse</artifactId>
 			<version>${otter_canal_version}</version>
 			<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>
@@ -44,6 +52,10 @@
 			<artifactId>canal.server</artifactId>
 			<version>${otter_canal_version}</version>
 			<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>

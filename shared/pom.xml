@@ -11,15 +11,15 @@
 	<packaging>pom</packaging>
 	<name>shared module for otter</name>
 	<url>http://github.com/alibaba/otter</url>
-	
-	<modules>	
+
+	<modules>
 		<module>arbitrate</module>
 		<module>common</module>
 		<module>communication</module>
 		<module>etl</module>
 		<module>push</module>
 	</modules>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -63,9 +63,9 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.alibaba</groupId>
+				<groupId>org.apache.dubbo</groupId>
 				<artifactId>dubbo</artifactId>
-				<version>2.6.9</version>
+				<version>3.3.6</version>
 				<exclusions>
 				  <exclusion>
 					<groupId>org.springframework</groupId>

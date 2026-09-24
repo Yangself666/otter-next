@@ -1,121 +1,102 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap namespace="com.alibaba.otter.manager.biz.statistics.delay.dal.dataobject.DelayStatDO">
-	<typeAlias alias="delayStat"
-		type="com.alibaba.otter.manager.biz.statistics.delay.dal.dataobject.DelayStatDO" />
-	<typeAlias alias="timelineDelayCondition"
-		type="com.alibaba.otter.manager.biz.statistics.delay.param.TimelineDelayCondition" />
-	<typeAlias alias="topDelayStat"
-		type="com.alibaba.otter.manager.biz.statistics.delay.param.TopDelayStat" />
-
-	<resultMap id="delayStatResult" class="delayStat">
-		<result property="id" column="ID" />
-		<result property="delayTime" column="DELAY_TIME" />
-		<result property="delayNumber" column="DELAY_NUMBER" />
-		<result property="pipelineId" column="PIPELINE_ID" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-	
-	<resultMap id="topDelayStatResult" class="topDelayStat">
-		<result property="channelName" column="CHANNEL_NAME" />
-		<result property="pipelineName" column="PIPELINE_NAME" />
-		<result property="channelId" column="CHANNEL_ID" />
-		<result property="pipelineId" column="PIPELINE_ID" />
-		<result property="delayTime" column="DELAY_TIME" />
-		<result property="lastUpdate" column="GMT_CREATE" />
-	</resultMap>
-	<!-- all delayStat columns -->
-	<sql id="allDelayStatColumns">ID,DELAY_TIME,DELAY_NUMBER,PIPELINE_ID,GMT_CREATE,GMT_MODIFIED</sql>
-
-	<!-- findDelayStatById -->
-	<select id="findDelayStatById" resultMap="delayStatResult" parameterClass="long">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.statistics.delay.dal.dataobject.DelayStatDO">
+    <resultMap id="delayStatResult" type="delayStat">
+        <result property="id" column="ID" />
+        <result property="delayTime" column="DELAY_TIME" />
+        <result property="delayNumber" column="DELAY_NUMBER" />
+        <result property="pipelineId" column="PIPELINE_ID" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <resultMap id="topDelayStatResult" type="topDelayStat">
+        <result property="channelName" column="CHANNEL_NAME" />
+        <result property="pipelineName" column="PIPELINE_NAME" />
+        <result property="channelId" column="CHANNEL_ID" />
+        <result property="pipelineId" column="PIPELINE_ID" />
+        <result property="delayTime" column="DELAY_TIME" />
+        <result property="lastUpdate" column="GMT_CREATE" />
+    </resultMap>
+    <!-- all delayStat columns -->
+    <sql id="allDelayStatColumns">ID,DELAY_TIME,DELAY_NUMBER,PIPELINE_ID,GMT_CREATE,GMT_MODIFIED</sql>
+    <!-- findDelayStatById -->
+    <select id="findDelayStatById" resultMap="delayStatResult" parameterType="long">
 		select
 		<include refid="allDelayStatColumns" />
-		from DELAY_STAT where ID = #value#
-	</select>	
-	
-	<!-- findRealtimeDelayStat -->
-	<select id="findRealtimeDelayStat" resultMap="delayStatResult" parameterClass="long">
+		from DELAY_STAT where ID = #{value}
+	</select>
+    <!-- findRealtimeDelayStat -->
+    <select id="findRealtimeDelayStat" resultMap="delayStatResult" parameterType="long">
 		select
 		<include refid="allDelayStatColumns" />
-		from DELAY_STAT 
-		where PIPELINE_ID=#pipelineId#
+		from DELAY_STAT
+		where PIPELINE_ID=#{pipelineId}
 		ORDER BY GMT_MODIFIED DESC, ID DESC limit 1
-	</select>		
-
-	<!-- listAllDelayStat -->
-	<select id="listAllDelayStat" resultMap="delayStatResult">
+	</select>
+    <!-- listAllDelayStat -->
+    <select id="listAllDelayStat" resultMap="delayStatResult">
 		select
 		<include refid="allDelayStatColumns" />
 		from DELAY_STAT ORDER BY GMT_MODIFIED DESC,ID DESC
 	</select>
-	
-	<!-- listDelayStatsByPipelineId -->
-	<select id="listDelayStatsByPipelineId" resultMap="delayStatResult" parameterClass="long">
+    <!-- listDelayStatsByPipelineId -->
+    <select id="listDelayStatsByPipelineId" resultMap="delayStatResult" parameterType="long">
 		select
 		<include refid="allDelayStatColumns" />
-		from DELAY_STAT 
-		where PIPELINE_ID=#pipelineId#
+		from DELAY_STAT
+		where PIPELINE_ID=#{pipelineId}
 		ORDER BY GMT_MODIFIED DESC,ID DESC
 	</select>
-
-	<!-- listTimelineDelayStatsByPipelineId -->
-	<select id="listTimelineDelayStatsByPipelineId" resultMap="delayStatResult" parameterClass="timelineDelayCondition">
+    <!-- listTimelineDelayStatsByPipelineId -->
+    <select id="listTimelineDelayStatsByPipelineId" resultMap="delayStatResult" parameterType="timelineDelayCondition">
 		select
 		<include refid="allDelayStatColumns" />
-		from DELAY_STAT 
-		where PIPELINE_ID=#pipelineId# and <![CDATA[ GMT_CREATE>= #start# and GMT_CREATE <= #end#]]>
+		from DELAY_STAT
+		where PIPELINE_ID=#{pipelineId} and  GMT_CREATE&gt;= #{start} and GMT_CREATE &lt;= #{end}
 		ORDER BY GMT_MODIFIED DESC,ID DESC
 	</select>
-	
-	<update id="modifyDelayStat" parameterClass="delayStat"><![CDATA[
+    <update id="modifyDelayStat" parameterType="delayStat">
 		update DELAY_STAT
 		set
-		DELAY_TIME=#delayTime#,
-		DELAY_NUMBER=#delayNumber#,
-		PIPELINE_ID=#pipelineId#,
+		DELAY_TIME=#{delayTime},
+		DELAY_NUMBER=#{delayNumber},
+		PIPELINE_ID=#{pipelineId},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#
-	]]></update>
-
-	<insert id="insertDelayStat" parameterClass="delayStat">
+		WHERE ID = #{id}
+	</update>
+    <insert id="insertDelayStat" parameterType="delayStat">
 		insert into DELAY_STAT
 		(DELAY_TIME, DELAY_NUMBER, PIPELINE_ID, GMT_CREATE, GMT_MODIFIED)
 		values
-		(#delayTime#,#delayNumber#,#pipelineId#,now(),now())
-		<selectKey keyProperty="id" resultClass="long">
+		(#{delayTime},#{delayNumber},#{pipelineId},now(),now())
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			select last_insert_id()
 		</selectKey>
-	</insert>
-
-	<delete id="deleteDelayStatById" parameterClass="long"><![CDATA[
-    	delete from DELAY_STAT where ID = #value#
-    ]]></delete>
-	
-	<!-- listTopByName -->
-	<select id="listTopByName" resultMap="topDelayStatResult">
+    </insert>
+    <delete id="deleteDelayStatById" parameterType="long">
+        delete from DELAY_STAT where ID = #{value}
+    </delete>
+    <!-- listTopByName -->
+    <select id="listTopByName" resultMap="topDelayStatResult">
 		select p.* , d.DELAY_TIME , d.GMT_CREATE
 		from DELAY_STAT d , (
-			select p.CHANNEL_ID , p.ID as PIPELINE_ID , c.NAME as CHANNEL_NAME, p.NAME as PIPELINE_NAME from CHANNEL c , PIPELINE p  
+			select p.CHANNEL_ID , p.ID as PIPELINE_ID , c.NAME as CHANNEL_NAME, p.NAME as PIPELINE_NAME from CHANNEL c , PIPELINE p
 			where 1 = 1 and c.ID = p.CHANNEL_ID
-			<dynamic prepend="and">
-				<isNotEmpty property="searchKey">
-				c.NAME like concat('%',replace(#searchKey#,'_','\_'),'%')   
-				</isNotEmpty>
-			</dynamic>
-			) p 
+			<trim prefix="and" prefixOverrides="AND |OR ">
+            <if test="searchKey != null and searchKey != ''">
+				c.NAME like concat('%',replace(#{searchKey},'_','\_'),'%')
+				</if>
+        </trim>
+			) p
 			where d.ID = (
-				select d1.ID from DELAY_STAT d1 
+				select d1.ID from DELAY_STAT d1
 					where d1.PIPELINE_ID = p.PIPELINE_ID order by d1.PIPELINE_ID desc , d1.GMT_CREATE desc limit 1
 				)
 			order by d.DELAY_TIME desc , d.ID desc
-			<dynamic>
-				<isNotEmpty property="topN" >
-						limit #topN#
-				</isNotEmpty>
-			</dynamic>
-	</select>
-</sqlMap>  
+			<trim>
+            <if test="topN != null">
+						limit #{topN}
+				</if>
+        </trim>
+    </select>
+</mapper>

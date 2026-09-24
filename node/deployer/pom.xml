@@ -11,8 +11,16 @@
 	<packaging>jar</packaging>
 	<name>node deployer for otter</name>
 	<url>http://github.com/alibaba/otter</url>
-	
+
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
 			<artifactId>node.common</artifactId>
@@ -34,7 +42,7 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<!-- deploy模块的packaging通常是jar，如果项目中没有java 源代码或资源文件，加上这一段配置使项目能通过构建 -->
@@ -51,8 +59,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<!-- 这是最新版本，推荐使用这个版本 -->
-				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>assemble</id>
@@ -125,7 +131,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>mvn</id>
 			<activation>

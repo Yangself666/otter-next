@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 多线程TreahdFactory工厂，允许指定线程名字
- * 
+ *
  * @author jianghang 2011-9-19 下午09:00:37
  * @version 4.0.0
  */
@@ -56,8 +56,7 @@ public class NamedThreadFactory implements ThreadFactory {
     public NamedThreadFactory(String name, boolean daemon){
         this.name = name;
         this.daemon = daemon;
-        SecurityManager s = System.getSecurityManager();
-        group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        group = Thread.currentThread().getThreadGroup();
     }
 
     public Thread newThread(Runnable r) {

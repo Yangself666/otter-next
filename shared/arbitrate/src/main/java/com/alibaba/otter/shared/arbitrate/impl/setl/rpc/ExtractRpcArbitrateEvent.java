@@ -35,7 +35,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * 基于rpc方式实现的extract调度
- * 
+ *
  * @author jianghang 2012-9-29 上午10:59:24
  * @version 4.1.0
  */
@@ -46,7 +46,7 @@ public class ExtractRpcArbitrateEvent implements ExtractArbitrateEvent {
     private RpcStageEventDispatcher rpcStageEventDispatcher;
 
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
@@ -75,7 +75,7 @@ public class ExtractRpcArbitrateEvent implements ExtractArbitrateEvent {
     }
 
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         rpcStageEventDispatcher.single(StageType.EXTRACT, data);// 通知下一个节点
     }
 

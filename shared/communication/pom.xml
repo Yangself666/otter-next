@@ -11,7 +11,7 @@
 	<packaging>jar</packaging>
 	<name>communication module for otter</name>
 	<url>http://github.com/alibaba/otter</url>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
@@ -19,7 +19,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.alibaba</groupId>
+			<groupId>org.apache.dubbo</groupId>
 			<artifactId>dubbo</artifactId>
 			<exclusions>
 				<exclusion>

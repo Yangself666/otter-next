@@ -59,7 +59,7 @@ import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 管理和维护对应node机器内的S.E.T.L任务，实时接收manager推送的NodeTask调度信息，可查看 {@linkplain NodeTaskService}
- * 
+ *
  * @author jianghang 2012-4-21 下午04:48:12
  * @version 4.0.2
  */
@@ -121,11 +121,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
             logger.error("##stop node error!", e);
         }
 
-        try {
-            OtterContextLocator.close();
-        } catch (Exception e) {
-            logger.error("##cloes spring error!", e);
-        }
+        // 应用上下文由 Spring Boot 统一关闭
 
         ZooKeeperClient.destory();// 关闭zookeeper
     }

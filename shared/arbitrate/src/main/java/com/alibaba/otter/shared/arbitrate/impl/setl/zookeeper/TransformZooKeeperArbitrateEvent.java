@@ -40,7 +40,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * 关注extracted节点，创建transformed节点
- * 
+ *
  * @author jianghang 2011-8-9 下午05:10:50
  */
 public class TransformZooKeeperArbitrateEvent implements TransformArbitrateEvent {
@@ -56,11 +56,11 @@ public class TransformZooKeeperArbitrateEvent implements TransformArbitrateEvent
      * 3. 检查当前的即时Permit状态 (在阻塞获取processId过程会出现一些error信号,process节点会被删除)
      * 4. 获取Select传递的EventData数据，添加next node信息后直接返回
      * </pre>
-     * 
+     *
      * @return
      */
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
 
@@ -87,7 +87,7 @@ public class TransformZooKeeperArbitrateEvent implements TransformArbitrateEvent
         } else {
             logger.info("pipelineId[{}] transform ignore processId[{}] by status[{}]", new Object[] { pipelineId,
                     processId, status });
-                    
+
             // 释放下processId，因为load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
             String path = StagePathUtils.getProcess(pipelineId, processId);
             zookeeper.delete(path);
@@ -100,11 +100,11 @@ public class TransformZooKeeperArbitrateEvent implements TransformArbitrateEvent
      * 算法:
      * 1. 创建对应的transformed节点,标志transform已完成
      * </pre>
-     * 
+     *
      * @param pipelineId 同步流id
      */
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         String path = StagePathUtils.getTransformStage(data.getPipelineId(), data.getProcessId());
         data.setCurrNid(ArbitrateConfigUtils.getCurrentNid());
         // 序列化

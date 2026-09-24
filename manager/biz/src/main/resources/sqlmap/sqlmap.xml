@@ -1,37 +1,67 @@
-<!DOCTYPE sqlMapConfig SYSTEM "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
-<sqlMapConfig>
-	<settings cacheModelsEnabled="true" enhancementEnabled="false"
-		lazyLoadingEnabled="false" maxRequests="3000" maxSessions="3000"
-		maxTransactions="3000" useStatementNamespaces="false" />
-		
-	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.channel.ChannelParameter" callback="com.alibaba.otter.manager.biz.config.channel.dal.ibatis.ChannelParameterTypeHandler"/>
-	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter" callback="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.PipelineParameterTypeHandler"/>
-	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.node.NodeParameter" callback="com.alibaba.otter.manager.biz.config.node.dal.ibatis.NodeParameterTypeHandler"/>
-	<typeHandler javaType="com.alibaba.otter.canal.instance.manager.model.CanalParameter" callback="com.alibaba.otter.manager.biz.config.canal.dal.ibatis.CanalParameterTypeHandler"/>
-	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.parameter.SystemParameter" callback="com.alibaba.otter.manager.biz.config.parameter.dal.ibatis.SystemParameterTypeHandler"/>
-	<typeHandler javaType="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleParameter" callback="com.alibaba.otter.manager.biz.config.alarm.dal.ibatis.AlarmRuleParameterTypeHandler"/>
-	
-	<typeHandler javaType="java.util.List" callback="com.alibaba.otter.manager.biz.config.utils.ListTypeHandler"/>
-	<typeHandler javaType="java.util.Map" callback="com.alibaba.otter.manager.biz.config.utils.MapTypeHandler"/>
-	
-	<sqlMap resource="sqlmap/sqlmap-mapping-user.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-channel.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-pipeline.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datamedia.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datamediasource.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datamediapair.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-node.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-canal.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-logrecord.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-pipelinenoderelation.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-delayStat.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-tableStat.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-tableHistoryStat.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-throughputStat.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-systemParameter.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datacolumnpair.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datacolumnpairgroup.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-alarmRule.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-autokeeper.xml" />
-	<sqlMap resource="sqlmap/sqlmap-mapping-datamatrix.xml" />
-</sqlMapConfig>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="jdbcTypeForNull" value="NULL" />
+    </settings>
+    <typeAliases>
+        <typeAlias alias="throughputStat" type="com.alibaba.otter.manager.biz.statistics.throughput.dal.dataobject.ThroughputStatDO" />
+        <typeAlias alias="throughputCondition" type="com.alibaba.otter.manager.biz.statistics.throughput.param.ThroughputCondition" />
+        <typeAlias alias="realtimeThroughputCondition" type="com.alibaba.otter.manager.biz.statistics.throughput.param.RealtimeThroughputCondition" />
+        <typeAlias alias="timelineThroughputCondition" type="com.alibaba.otter.manager.biz.statistics.throughput.param.TimelineThroughputCondition" />
+        <typeAlias alias="canal" type="com.alibaba.otter.manager.biz.config.canal.dal.dataobject.CanalDO" />
+        <typeAlias alias="dataMediaPair" type="com.alibaba.otter.manager.biz.config.datamediapair.dal.dataobject.DataMediaPairDO" />
+        <typeAlias alias="tableStat" type="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableStatDO" />
+        <typeAlias alias="timelineBehaviorHistoryCondition" type="com.alibaba.otter.manager.biz.statistics.table.param.TimelineBehaviorHistoryCondition" />
+        <typeAlias alias="ALARM_RULE" type="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleDO" />
+        <typeAlias alias="tableHistoryStat" type="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableHistoryStatDO" />
+        <typeAlias alias="dataColumnPair" type="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairDO" />
+        <typeAlias alias="delayStat" type="com.alibaba.otter.manager.biz.statistics.delay.dal.dataobject.DelayStatDO" />
+        <typeAlias alias="timelineDelayCondition" type="com.alibaba.otter.manager.biz.statistics.delay.param.TimelineDelayCondition" />
+        <typeAlias alias="topDelayStat" type="com.alibaba.otter.manager.biz.statistics.delay.param.TopDelayStat" />
+        <typeAlias alias="user" type="com.alibaba.otter.manager.biz.user.dal.dataobject.UserDO" />
+        <typeAlias alias="pipelineNodeRelation" type="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineNodeRelationDO" />
+        <typeAlias alias="dataMatrix" type="com.alibaba.otter.manager.biz.config.datamatrix.dal.dataobject.DataMatrixDO" />
+        <typeAlias alias="pipeline" type="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO" />
+        <typeAlias alias="node" type="com.alibaba.otter.manager.biz.config.node.dal.dataobject.NodeDO" />
+        <typeAlias alias="dataColumnPairGroup" type="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO" />
+        <typeAlias alias="channel" type="com.alibaba.otter.manager.biz.config.channel.dal.dataobject.ChannelDO" />
+        <typeAlias alias="dataMedia" type="com.alibaba.otter.manager.biz.config.datamedia.dal.dataobject.DataMediaDO" />
+        <typeAlias alias="systemParameter" type="com.alibaba.otter.manager.biz.config.parameter.dal.dataobject.SystemParameterDO" />
+        <typeAlias alias="autoKeeperCluster" type="com.alibaba.otter.manager.biz.config.autokeeper.dal.dataobject.AutoKeeperClusterDO" />
+        <typeAlias alias="logRecord" type="com.alibaba.otter.manager.biz.config.record.dal.dataobject.LogRecordDO" />
+        <typeAlias alias="dataMediaSource" type="com.alibaba.otter.manager.biz.config.datamediasource.dal.dataobject.DataMediaSourceDO" />
+    </typeAliases>
+    <typeHandlers>
+        <typeHandler javaType="com.alibaba.otter.shared.common.model.config.channel.ChannelParameter" handler="com.alibaba.otter.manager.biz.config.channel.dal.mybatis.ChannelParameterTypeHandler" />
+        <typeHandler javaType="com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter" handler="com.alibaba.otter.manager.biz.config.pipeline.dal.mybatis.PipelineParameterTypeHandler" />
+        <typeHandler javaType="com.alibaba.otter.shared.common.model.config.node.NodeParameter" handler="com.alibaba.otter.manager.biz.config.node.dal.mybatis.NodeParameterTypeHandler" />
+        <typeHandler javaType="com.alibaba.otter.canal.instance.manager.model.CanalParameter" handler="com.alibaba.otter.manager.biz.config.canal.dal.mybatis.CanalParameterTypeHandler" />
+        <typeHandler javaType="com.alibaba.otter.shared.common.model.config.parameter.SystemParameter" handler="com.alibaba.otter.manager.biz.config.parameter.dal.mybatis.SystemParameterTypeHandler" />
+        <typeHandler javaType="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleParameter" handler="com.alibaba.otter.manager.biz.config.alarm.dal.mybatis.AlarmRuleParameterTypeHandler" />
+        <typeHandler javaType="java.util.List" handler="com.alibaba.otter.manager.biz.config.utils.ListTypeHandler" />
+        <typeHandler javaType="java.util.Map" handler="com.alibaba.otter.manager.biz.config.utils.MapTypeHandler" />
+    </typeHandlers>
+    <mappers>
+        <mapper resource="sqlmap/sqlmap-mapping-user.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-channel.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-pipeline.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datamedia.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datamediasource.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datamediapair.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-node.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-canal.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-logrecord.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-pipelinenoderelation.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-delayStat.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-tableStat.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-tableHistoryStat.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-throughputStat.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-systemParameter.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datacolumnpair.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datacolumnpairgroup.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-alarmRule.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-autokeeper.xml" />
+        <mapper resource="sqlmap/sqlmap-mapping-datamatrix.xml" />
+    </mappers>
+</configuration>

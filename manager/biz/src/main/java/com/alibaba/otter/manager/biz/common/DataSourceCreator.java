@@ -63,7 +63,7 @@ public class DataSourceCreator implements DisposableBean {
      * 直接创建数据源，不做cache
      */
     public DataSource createDataSource(DataMediaSource dataMediaSource) {
-        Assert.notNull(dataMediaSource);
+        Assert.notNull(dataMediaSource, "dataMediaSource must satisfy notNull");
         DbMediaSource dbMediaSource = (DbMediaSource) dataMediaSource;
 
         // 扩展功能,可以自定义一些自己实现的 dataSource

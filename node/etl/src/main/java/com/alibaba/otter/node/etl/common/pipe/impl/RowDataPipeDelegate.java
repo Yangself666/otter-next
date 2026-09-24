@@ -45,7 +45,7 @@ import com.alibaba.otter.shared.etl.model.EventData;
 
 /**
  * 管道操作相关工具类
- * 
+ *
  * @author jianghang 2011-10-17 下午04:02:35
  * @version 4.0.0
  */
@@ -112,7 +112,7 @@ public class RowDataPipeDelegate {
     }
 
     public DbBatch get(List<PipeKey> keys) {
-        Assert.notNull(keys);
+        Assert.notNull(keys, "keys must satisfy notNull");
         DbBatch dbBatch = new DbBatch();
         Future<File> future = null;
         for (final PipeKey key : keys) {

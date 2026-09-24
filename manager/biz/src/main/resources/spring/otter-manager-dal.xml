@@ -3,63 +3,59 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:lang="http://www.springframework.org/schema/lang"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	default-autowire="byName">
 
 
-	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation">
 			<value>classpath:sqlmap/sqlmap.xml</value>
 		</property>
 	</bean>
 
-	<bean id="baseSeoDAO" abstract="true">
-		<property name="sqlMapClient" ref="SqlMapClient" />
-	</bean>
-
 	<bean id="throughputDao"
-		class="com.alibaba.otter.manager.biz.statistics.throughput.dal.ibatis.IbatisThroughputDAO" />
+		class="com.alibaba.otter.manager.biz.statistics.throughput.dal.mybatis.MyBatisThroughputDAO" />
 	<bean id="tableStatDao"
-		class="com.alibaba.otter.manager.biz.statistics.table.dal.ibatis.IbatisTableStatDAO" />
+		class="com.alibaba.otter.manager.biz.statistics.table.dal.mybatis.MyBatisTableStatDAO" />
 	<bean id="tableHistoryStatDao"
-		class="com.alibaba.otter.manager.biz.statistics.table.dal.ibatis.IbatisTableHistoryStatDAO" />
+		class="com.alibaba.otter.manager.biz.statistics.table.dal.mybatis.MyBatisTableHistoryStatDAO" />
 	<bean id="delayStatDao"
-		class="com.alibaba.otter.manager.biz.statistics.delay.dal.ibatis.IbatisDelayStatDAO" />
+		class="com.alibaba.otter.manager.biz.statistics.delay.dal.mybatis.MyBatisDelayStatDAO" />
 	<bean id="userDao"
-		class="com.alibaba.otter.manager.biz.user.dal.ibatis.IbatisUserDAO" />
+		class="com.alibaba.otter.manager.biz.user.dal.mybatis.MyBatisUserDAO" />
 	<bean id="channelDao"
-		class="com.alibaba.otter.manager.biz.config.channel.dal.ibatis.IbatisChannelDAO" />
+		class="com.alibaba.otter.manager.biz.config.channel.dal.mybatis.MyBatisChannelDAO" />
 	<bean id="nodeDao"
-		class="com.alibaba.otter.manager.biz.config.node.dal.ibatis.IbatisNodeDAO" />
+		class="com.alibaba.otter.manager.biz.config.node.dal.mybatis.MyBatisNodeDAO" />
 	<bean id="canalDao"
-		class="com.alibaba.otter.manager.biz.config.canal.dal.ibatis.IbatisCanalDAO" />
+		class="com.alibaba.otter.manager.biz.config.canal.dal.mybatis.MyBatisCanalDAO" />
 	<bean id="dataMatrixDao"
-		class="com.alibaba.otter.manager.biz.config.datamatrix.dal.ibatis.IbatisDataMatrixDAO" />
+		class="com.alibaba.otter.manager.biz.config.datamatrix.dal.mybatis.MyBatisDataMatrixDAO" />
 	<bean id="dataMediaDao"
-		class="com.alibaba.otter.manager.biz.config.datamedia.dal.ibatis.IbatisDataMediaDAO" />
+		class="com.alibaba.otter.manager.biz.config.datamedia.dal.mybatis.MyBatisDataMediaDAO" />
 	<bean id="dataMediaSourceDao"
-		class="com.alibaba.otter.manager.biz.config.datamediasource.dal.ibatis.IbatisDataMediaSourceDAO" />
+		class="com.alibaba.otter.manager.biz.config.datamediasource.dal.mybatis.MyBatisDataMediaSourceDAO" />
 	<bean id="dataMediaPairDao"
-		class="com.alibaba.otter.manager.biz.config.datamediapair.dal.ibatis.IbatisDataMediaPairDAO" />
+		class="com.alibaba.otter.manager.biz.config.datamediapair.dal.mybatis.MyBatisDataMediaPairDAO" />
 	<bean id="pipelineDao"
-		class="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.IbatisPipelineDAO" />
+		class="com.alibaba.otter.manager.biz.config.pipeline.dal.mybatis.MyBatisPipelineDAO" />
 	<bean id="pipelineNodeRelationDao"
-		class="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.IbatisPipelineNodeRelationDAO" />
+		class="com.alibaba.otter.manager.biz.config.pipeline.dal.mybatis.MyBatisPipelineNodeRelationDAO" />
 	<bean id="dataColumnPairDao"
-		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.ibatis.IbatisDataColumnPairDAO" />
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.mybatis.MyBatisDataColumnPairDAO" />
 	<bean id="dataColumnPairGroupDao"
-		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.ibatis.IbatisDataColumnPairGroupDAO" />
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.mybatis.MyBatisDataColumnPairGroupDAO" />
 	<bean id="systemParameterDao"
-		class="com.alibaba.otter.manager.biz.config.parameter.dal.ibatis.IbatisSystemParameterDAO" />
+		class="com.alibaba.otter.manager.biz.config.parameter.dal.mybatis.MyBatisSystemParameterDAO" />
 	<bean id="logRecordDao"
-		class=" com.alibaba.otter.manager.biz.config.record.dal.ibatis.IbatisLogRecordDAO" />
+		class=" com.alibaba.otter.manager.biz.config.record.dal.mybatis.MyBatisLogRecordDAO" />
 	<bean id="alarmRuleDao"
-		class="com.alibaba.otter.manager.biz.config.alarm.dal.ibatis.IbatisAlarmRuleDAO" />
+		class="com.alibaba.otter.manager.biz.config.alarm.dal.mybatis.MyBatisAlarmRuleDAO" />
 	<bean id="autoKeeperClusterDao"
-		class="com.alibaba.otter.manager.biz.config.autokeeper.dal.ibatis.IbatisAutoKeeperClusterDAO" />
+		class="com.alibaba.otter.manager.biz.config.autokeeper.dal.mybatis.MyBatisAutoKeeperClusterDAO" />
 </beans>

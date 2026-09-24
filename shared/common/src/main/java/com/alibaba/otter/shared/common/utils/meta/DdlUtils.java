@@ -49,7 +49,7 @@ import org.springframework.util.Assert;
 
 /**
  * copy from otter3.0
- * 
+ *
  * @author xiaoqing.zhouxq 2012-3-30 上午10:43:04
  * @author zebin.xuzb add filter for data
  */
@@ -126,12 +126,12 @@ public class DdlUtils {
                 try {
                     if (filter != null) {
                         con = filter.filterConnection(con);
-                        Assert.notNull(con);
+                        Assert.notNull(con, "con must satisfy notNull");
                     }
                     DatabaseMetaData databaseMetaData = con.getMetaData();
                     if (filter != null) {
                         databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
-                        Assert.notNull(databaseMetaData);
+                        Assert.notNull(databaseMetaData, "databaseMetaData must satisfy notNull");
                     }
 
                     String databaseName = databaseMetaData.getDatabaseProductName();
@@ -200,12 +200,12 @@ public class DdlUtils {
                 try {
                     if (filter != null) {
                         con = filter.filterConnection(con);
-                        Assert.notNull(con);
+                        Assert.notNull(con, "con must satisfy notNull");
                     }
                     DatabaseMetaData databaseMetaData = con.getMetaData();
                     if (filter != null) {
                         databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
-                        Assert.notNull(databaseMetaData);
+                        Assert.notNull(databaseMetaData, "databaseMetaData must satisfy notNull");
                     }
 
                     String databaseName = databaseMetaData.getDatabaseProductName();
@@ -296,7 +296,7 @@ public class DdlUtils {
 
     /**
      * 获取DRDS下表的拆分字段, 返回格式为 id,name
-     * 
+     *
      * @param dataSource
      * @param schemaName
      * @param tableName

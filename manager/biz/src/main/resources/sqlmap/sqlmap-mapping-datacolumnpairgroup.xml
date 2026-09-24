@@ -1,72 +1,57 @@
-<?xml version="1.0" encoding="UTF-8" ?>  
-    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
-       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
-
-<sqlMap namespace="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO">
-	<typeAlias alias="dataColumnPairGroup"
-		type="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO"/>
-
-	<resultMap id="dataColumnPairGroupResult" class="dataColumnPairGroup">
-		<result property="id" column="ID" />
-		<result property="columnPairContent" column="COLUMN_PAIR_CONTENT" />
-		<result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
-		<result property="gmtCreate" column="GMT_CREATE" />
-		<result property="gmtModified" column="GMT_MODIFIED" />
-	</resultMap>
-
-	<!-- all dataMediaPair columns -->
-	<sql id="allDataColumnPairGroupColumns">ID,COLUMN_PAIR_CONTENT,DATA_MEDIA_PAIR_ID,GMT_CREATE,GMT_MODIFIED</sql>
-
-	<select id="findDataColumnPairGroupById" resultMap="dataColumnPairGroupResult" parameterClass="long">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO">
+    <resultMap id="dataColumnPairGroupResult" type="dataColumnPairGroup">
+        <result property="id" column="ID" />
+        <result property="columnPairContent" column="COLUMN_PAIR_CONTENT" />
+        <result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
+        <result property="gmtCreate" column="GMT_CREATE" />
+        <result property="gmtModified" column="GMT_MODIFIED" />
+    </resultMap>
+    <!-- all dataMediaPair columns -->
+    <sql id="allDataColumnPairGroupColumns">ID,COLUMN_PAIR_CONTENT,DATA_MEDIA_PAIR_ID,GMT_CREATE,GMT_MODIFIED</sql>
+    <select id="findDataColumnPairGroupById" resultMap="dataColumnPairGroupResult" parameterType="long">
 		select
 		<include refid="allDataColumnPairGroupColumns" />
-		from COLUMN_PAIR_GROUP where ID = #value#
+		from COLUMN_PAIR_GROUP where ID = #{value}
 	</select>
-	
-	<select id="listDataColumnPairGroupByDataMediaPairId" resultMap="dataColumnPairGroupResult" parameterClass="long">
+    <select id="listDataColumnPairGroupByDataMediaPairId" resultMap="dataColumnPairGroupResult" parameterType="long">
 		select
 		<include refid="allDataColumnPairGroupColumns" />
-		from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #value#
+		from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #{value}
 	</select>
-	
-	<select id="listDataColumnPairGroupByDataMediaPairIds" resultMap="dataColumnPairGroupResult">
+    <select id="listDataColumnPairGroupByDataMediaPairIds" resultMap="dataColumnPairGroupResult">
 		select
 		<include refid="allDataColumnPairGroupColumns" />
 		from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID in
-		<iterate open="(" close=")" conjunction=",">
-			#[]#
-		</iterate>
-	</select>
-
-	<update id="updateDataColumnPairGroup" parameterClass="dataColumnPairGroup">
+		<foreach open="(" close=")" collection="(_parameter instanceof java.util.Map ? (_parameter.containsKey(&quot;array&quot;) ? array : list) : _parameter)" item="item" separator=",">
+			#{item}
+		</foreach>
+    </select>
+    <update id="updateDataColumnPairGroup" parameterType="dataColumnPairGroup">
 		update COLUMN_PAIR_GROUP
 		set
-		COLUMN_PAIR_CONTENT = #columnPairContent#,
-		DATA_MEDIA_PAIR_ID = #dataMediaPairId#,
+		COLUMN_PAIR_CONTENT = #{columnPairContent},
+		DATA_MEDIA_PAIR_ID = #{dataMediaPairId},
 		GMT_MODIFIED=now()
-		WHERE ID = #id#
+		WHERE ID = #{id}
 	</update>
-	
-	
-	<insert id="insertDataColumnPairGroup" parameterClass="dataColumnPairGroup">
+    <insert id="insertDataColumnPairGroup" parameterType="dataColumnPairGroup">
 		insert into COLUMN_PAIR_GROUP
 		(COLUMN_PAIR_CONTENT,DATA_MEDIA_PAIR_ID,GMT_CREATE, GMT_MODIFIED)
-		SELECT #columnPairContent#,#dataMediaPairId#,now(),now() 
-		from dual 
-		WHERE not exists (select * from COLUMN_PAIR_GROUP 
-		where COLUMN_PAIR_GROUP.COLUMN_PAIR_CONTENT = #columnPairContent# 
-		and COLUMN_PAIR_GROUP.DATA_MEDIA_PAIR_ID = #dataMediaPairId#); 
-		<selectKey keyProperty="id" resultClass="long">
+		SELECT #{columnPairContent},#{dataMediaPairId},now(),now()
+		from dual
+		WHERE not exists (select * from COLUMN_PAIR_GROUP
+		where COLUMN_PAIR_GROUP.COLUMN_PAIR_CONTENT = #{columnPairContent}
+		and COLUMN_PAIR_GROUP.DATA_MEDIA_PAIR_ID = #{dataMediaPairId});
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
 			select last_insert_id()
 		</selectKey>
-	</insert>
-
-	<delete id="deleteDataColumnPairGroupById" parameterClass="long">
-    	delete from COLUMN_PAIR_GROUP where ID = #value#
+    </insert>
+    <delete id="deleteDataColumnPairGroupById" parameterType="long">
+        delete from COLUMN_PAIR_GROUP where ID = #{value}
     </delete>
-    
-    <delete id="deleteDataColumnPairGroupByDataMediaPairId" parameterClass="long">
-    	delete from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #value#
+    <delete id="deleteDataColumnPairGroupByDataMediaPairId" parameterType="long">
+        delete from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #{value}
     </delete>
-
-</sqlMap>  
+</mapper>

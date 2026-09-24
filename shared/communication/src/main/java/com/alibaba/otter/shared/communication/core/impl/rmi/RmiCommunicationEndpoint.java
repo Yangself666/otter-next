@@ -17,23 +17,26 @@
 package com.alibaba.otter.shared.communication.core.impl.rmi;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
-import org.springframework.remoting.rmi.RmiServiceExporter;
-
-import com.alibaba.otter.shared.communication.core.CommunicationEndpoint;
 import com.alibaba.otter.shared.communication.core.exception.CommunicationException;
 import com.alibaba.otter.shared.communication.core.impl.AbstractCommunicationEndpoint;
 
 /**
  * 基于rmi的endpoint的实现，包装了一个rmi remote对象
- * 
+ *
  * @author jianghang 2011-9-9 下午07:06:25
  */
 public class RmiCommunicationEndpoint extends AbstractCommunicationEndpoint {
 
     private String             host;
     private int                port                 = 1099;
-    private RmiServiceExporter export;
+    private Registry           registry;
+    private RemoteCommunicationEndpoint remote;
+    private boolean            ownsRegistry;
+    private boolean            bound;
     private boolean            alwaysCreateRegistry = false;
 
     public RmiCommunicationEndpoint(){
@@ -44,28 +47,59 @@ public class RmiCommunicationEndpoint extends AbstractCommunicationEndpoint {
         initial();
     }
 
-    public void initial() {
-        export = new RmiServiceExporter();
-        export.setServiceName("endpoint");
-        export.setService(this);// 暴露自己
-        export.setServiceInterface(CommunicationEndpoint.class);
-        export.setRegistryHost(host);
-        export.setRegistryPort(port);
-        export.setAlwaysCreateRegistry(alwaysCreateRegistry);// 强制创建一个
-
+    public synchronized void initial() {
+        if (bound) return;
         try {
-            export.afterPropertiesSet();
-        } catch (RemoteException e) {
+            if (alwaysCreateRegistry) {
+                registry = LocateRegistry.createRegistry(port);
+                ownsRegistry = true;
+            } else {
+                registry = LocateRegistry.getRegistry(host, port);
+                try {
+                    registry.list();
+                } catch (RemoteException e) {
+                    if (host != null && !host.isBlank() && !"localhost".equals(host) && !"127.0.0.1".equals(host)) {
+                        throw e;
+                    }
+                    registry = LocateRegistry.createRegistry(port);
+                    ownsRegistry = true;
+                }
+            }
+            remote = this::acceptEvent;
+            registry.bind("endpoint", UnicastRemoteObject.exportObject(remote, 0));
+            bound = true;
+        } catch (RemoteException | java.rmi.AlreadyBoundException e) {
+            destory();
             throw new CommunicationException("Rmi_Create_Error", e);
         }
-
     }
 
-    public void destory() {
+    public synchronized void destory() {
         try {
-            export.destroy();
-        } catch (RemoteException e) {
-            throw new CommunicationException("Rmi_Destory_Error", e);
+            if (registry != null && bound) {
+                registry.unbind("endpoint");
+            }
+        } catch (Exception e) {
+            // 注册中心可能已先于服务端关闭，继续释放本地导出对象
+        } finally {
+            if (remote != null) {
+                try {
+                    UnicastRemoteObject.unexportObject(remote, true);
+                } catch (java.rmi.NoSuchObjectException e) {
+                    // 尚未完成导出的对象无需再次释放
+                }
+                remote = null;
+            }
+            if (ownsRegistry && registry != null) {
+                try {
+                    UnicastRemoteObject.unexportObject(registry, true);
+                } catch (java.rmi.NoSuchObjectException e) {
+                    // 注册中心已经关闭
+                }
+            }
+            registry = null;
+            ownsRegistry = false;
+            bound = false;
         }
     }
 

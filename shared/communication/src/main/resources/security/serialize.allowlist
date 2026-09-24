@@ -1,0 +1,6 @@
+com.alibaba.otter.shared.communication.model.
+com.alibaba.otter.shared.common.model.
+com.alibaba.otter.shared.arbitrate.model.
+com.alibaba.otter.shared.etl.model.
+com.alibaba.otter.canal.instance.manager.model.
+com.alibaba.otter.canal.protocol.

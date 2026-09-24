@@ -34,7 +34,7 @@ import com.alibaba.otter.shared.communication.model.arbitrate.StopChannelEvent;
 
 /**
  * 基于内存版本的termin信号处理
- * 
+ *
  * @author jianghang 2012-9-27 下午11:30:13
  * @version 4.1.0
  */
@@ -46,7 +46,7 @@ public class TerminMemoryArbitrateEvent implements TerminArbitrateEvent {
     private ChannelArbitrateEvent         channelEvent;
 
     public TerminEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         MemoryStageController stageController = ArbitrateFactory.getInstance(pipelineId, MemoryStageController.class);
         TerminEventData eventData = stageController.waitTermin();
         if (logger.isDebugEnabled()) {
@@ -57,7 +57,7 @@ public class TerminMemoryArbitrateEvent implements TerminArbitrateEvent {
     }
 
     public void exhaust(Long pipelineId) {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
         MemoryStageController stageController = ArbitrateFactory.getInstance(pipelineId, MemoryStageController.class);
         int size = stageController.sizeTermin();
         try {
@@ -76,7 +76,7 @@ public class TerminMemoryArbitrateEvent implements TerminArbitrateEvent {
         MemoryStageController stageController = ArbitrateFactory.getInstance(data.getPipelineId(),
                                                                              MemoryStageController.class);
         if (type.isNormal()) {
-            Assert.notNull(data.getProcessId());
+            Assert.notNull(data.getProcessId(), "data.getProcessId() must satisfy notNull");
             stageController.offerTermin(data);
         } else if (type.isWarning()) {
             warningTerminProcess.process(data); // warn单独处理，不需要关闭相关的pipeline

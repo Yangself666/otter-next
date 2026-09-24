@@ -16,3 +16,5 @@ package-info.java
 .DS_Store
 *.tar.gz
 docker/data/
+
+node_modules/

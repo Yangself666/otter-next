@@ -37,7 +37,6 @@ import com.alibaba.otter.node.etl.common.io.EncryptUtils;
 import com.alibaba.otter.node.etl.common.io.EncryptedData;
 import com.alibaba.otter.node.etl.common.io.download.DataRetrieverFactory;
 import com.alibaba.otter.node.etl.common.io.signature.ChecksumException;
-import com.alibaba.otter.node.etl.common.jetty.JettyEmbedServer;
 import com.alibaba.otter.node.etl.common.pipe.Pipe;
 import com.alibaba.otter.node.etl.common.pipe.exception.PipeException;
 import com.alibaba.otter.shared.common.utils.ByteUtils;
@@ -47,7 +46,7 @@ import com.google.common.collect.Sets;
 
 /**
  * 基于http下载的pipe实现
- * 
+ *
  * @author jianghang 2011-10-13 下午06:31:13
  * @version 4.0.0
  */
@@ -60,7 +59,6 @@ public abstract class AbstractHttpPipe<T, KEY extends HttpPipeKey> implements Pi
                                                                                                 new NamedThreadFactory(
                                                                                                                        "HttpPipe-Cleaner")); ;
     protected Logger                          logger         = LoggerFactory.getLogger(this.getClass());
-    protected JettyEmbedServer                jettyEmbedServer;                                                                             // 注入对象，确保server已经启动
     protected Long                            period         = DEFAULT_PERIOD;
     protected ConfigClientService             configClientService;
     protected Long                            timeout        = 24 * 60 * 60 * 1000L;                                                        // 对应的超时时间,24小时
@@ -70,8 +68,8 @@ public abstract class AbstractHttpPipe<T, KEY extends HttpPipeKey> implements Pi
     protected DataRetrieverFactory            dataRetrieverFactory;
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(remoteUrlBuilder);
-        Assert.notNull(htdocsDir);
+        Assert.notNull(remoteUrlBuilder, "remoteUrlBuilder must satisfy notNull");
+        Assert.notNull(htdocsDir, "htdocsDir must satisfy notNull");
         NioUtils.create(new File(htdocsDir), false, 3);
         if (StringUtils.isEmpty(downloadDir)) {
             downloadDir = htdocsDir;
@@ -185,10 +183,6 @@ public abstract class AbstractHttpPipe<T, KEY extends HttpPipeKey> implements Pi
 
     public void setConfigClientService(ConfigClientService configClientService) {
         this.configClientService = configClientService;
-    }
-
-    public void setJettyEmbedServer(JettyEmbedServer jettyEmbedServer) {
-        this.jettyEmbedServer = jettyEmbedServer;
     }
 
     public void setRemoteUrlBuilder(RemoteUrlBuilder remoteUrlBuilder) {

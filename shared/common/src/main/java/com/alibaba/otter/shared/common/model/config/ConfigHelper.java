@@ -42,7 +42,7 @@ import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 常用的config处理帮助类
- * 
+ *
  * @author jianghang 2011-10-20 下午05:28:39
  * @version 4.0.0
  */
@@ -67,7 +67,7 @@ public class ConfigHelper {
      * 根据DataMedia id得到对应的DataMedia
      */
     public static DataMedia<? extends DataMediaSource> findDataMedia(Pipeline pipeline, Long id) {
-        Assert.notNull(pipeline);
+        Assert.notNull(pipeline, "pipeline must satisfy notNull");
         for (DataMediaPair pair : pipeline.getPairs()) {
             if (pair.getSource().getId().equals(id)) {
                 return pair.getSource();
@@ -134,7 +134,7 @@ public class ConfigHelper {
      * 根据DataMedia id得到对应的DataMediaPair
      */
     public static List<DataMediaPair> findDataMediaPairByMediaId(Pipeline pipeline, Long tid) {
-        Assert.notNull(pipeline);
+        Assert.notNull(pipeline, "pipeline must satisfy notNull");
         List<DataMediaPair> pairs = new ArrayList<DataMediaPair>();
         for (DataMediaPair pair : pipeline.getPairs()) {
             if (pair.getSource().getId().equals(tid)) {
@@ -151,7 +151,7 @@ public class ConfigHelper {
      * 根据DataMedia id得到对应的DataMediaPair
      */
     public static DataMediaPair findDataMediaPair(Pipeline pipeline, Long pairId) {
-        Assert.notNull(pipeline);
+        Assert.notNull(pipeline, "pipeline must satisfy notNull");
         for (DataMediaPair pair : pipeline.getPairs()) {
             if (pair.getId().equals(pairId)) {
                 return pair;
@@ -200,8 +200,8 @@ public class ConfigHelper {
     }
 
     public static String makeSQLPattern(ModeValue mode, String rawValue) {
-        Assert.notNull(mode);
-        Assert.notNull(rawValue);
+        Assert.notNull(mode, "mode must satisfy notNull");
+        Assert.notNull(rawValue, "rawValue must satisfy notNull");
         if (mode.getMode().isSingle()) {
             return rawValue;
         } else if (mode.getMode().isMulti()) {
@@ -223,8 +223,8 @@ public class ConfigHelper {
     }
 
     public static ModeValueFilter makeModeValueFilter(final ModeValue mode, final String rawValue) {
-        Assert.notNull(mode);
-        Assert.notNull(rawValue);
+        Assert.notNull(mode, "mode must satisfy notNull");
+        Assert.notNull(rawValue, "rawValue must satisfy notNull");
         if (mode.getMode().isSingle()) {
             return new ModeValueFilter() {
 

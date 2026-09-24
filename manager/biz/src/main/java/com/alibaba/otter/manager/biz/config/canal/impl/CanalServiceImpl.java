@@ -208,7 +208,7 @@ public class CanalServiceImpl implements CanalService {
 
     /**
      * 用于Model对象转化为DO对象
-     * 
+     *
      * @param canal
      * @return CanalDO
      */
@@ -231,7 +231,7 @@ public class CanalServiceImpl implements CanalService {
 
     /**
      * 用于DO对象转化为Model对象
-     * 
+     *
      * @param canalDo
      * @return Canal
      */
@@ -243,7 +243,8 @@ public class CanalServiceImpl implements CanalService {
             canal.setStatus(canalDo.getStatus());
             canal.setDesc(canalDo.getDescription());
             CanalParameter parameter = canalDo.getParameters();
-            AutoKeeperCluster zkCluster = autoKeeperClusterService.findAutoKeeperClusterById(parameter.getZkClusterId());
+            AutoKeeperCluster zkCluster = parameter.getZkClusterId() == null ? null
+                : autoKeeperClusterService.findAutoKeeperClusterById(parameter.getZkClusterId());
             if (zkCluster != null) {
                 parameter.setZkClusters(Arrays.asList(StringUtils.join(zkCluster.getServerList(), ',')));
             }

@@ -8,13 +8,6 @@
 			</includes>
 			<fileMode>0755</fileMode>
 		</fileSet>
-		<fileSet>
-			<directory>./src/main/resources/webapp</directory>
-			<outputDirectory>webapp</outputDirectory>
-			<includes>
-				<include>**/*</include>
-			</includes>
-		</fileSet>
 	</fileSets>
 	<files>
 		<file>
@@ -23,10 +16,6 @@
 		</file>
 		<file>
 			<source>./src/main/resources/otter.properties</source>
-			<outputDirectory>conf</outputDirectory>
-		</file>
-		<file>
-			<source>./src/main/resources/jetty.xml</source>
 			<outputDirectory>conf</outputDirectory>
 		</file>
 		<file>

@@ -41,7 +41,7 @@ import com.google.common.collect.OtterMigrateMap;
 
 /**
  * Comment of DataSourceServiceImpl
- * 
+ *
  * @author xiaoqing.zhouxq
  * @author zebinxu, add {@link DataSourceHanlder}
  */
@@ -107,7 +107,7 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
     }
 
     public DataSource getDataSource(long pipelineId, DataMediaSource dataMediaSource) {
-        Assert.notNull(dataMediaSource);
+        Assert.notNull(dataMediaSource, "dataMediaSource must satisfy notNull");
         return dataSources.get(pipelineId).get(dataMediaSource);
     }
 

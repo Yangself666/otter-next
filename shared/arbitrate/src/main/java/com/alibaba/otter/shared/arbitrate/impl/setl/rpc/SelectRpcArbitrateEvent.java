@@ -44,7 +44,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * 基于rpc模式的select实现, process的持久化控制还是依赖于zookeeper，只是改变了原先s/e/t/l之间的通讯方式，由zookeeper watcher改为rpc
- * 
+ *
  * @author jianghang 2012-9-28 下午09:32:04
  * @version 4.1.0
  */
@@ -55,7 +55,7 @@ public class SelectRpcArbitrateEvent implements SelectArbitrateEvent {
     private RpcStageEventDispatcher rpcStageEventDispatcher;
 
     public EtlEventData await(Long pipelineId) throws InterruptedException {
-        Assert.notNull(pipelineId);
+        Assert.notNull(pipelineId, "pipelineId must satisfy notNull");
 
         PermitMonitor permitMonitor = ArbitrateFactory.getInstance(pipelineId, PermitMonitor.class);
         permitMonitor.waitForPermit();// 阻塞等待授权
@@ -108,7 +108,7 @@ public class SelectRpcArbitrateEvent implements SelectArbitrateEvent {
     }
 
     public void single(EtlEventData data) {
-        Assert.notNull(data);
+        Assert.notNull(data, "data must satisfy notNull");
         rpcStageEventDispatcher.single(StageType.SELECT, data);
     }
 

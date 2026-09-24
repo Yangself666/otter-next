@@ -19,7 +19,7 @@ package com.alibaba.otter.manager.biz.monitor.impl;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ import com.alibaba.otter.shared.common.model.config.record.LogRecord;
 
 /**
  * 一类报警规则的匹配规则和报警
- * 
+ *
  * @author zebin.xuzb @ 2012-8-29
  * @version 4.1.0
  */
