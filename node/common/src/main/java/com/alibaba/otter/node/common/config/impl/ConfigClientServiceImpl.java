@@ -19,7 +19,6 @@ package com.alibaba.otter.node.common.config.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,7 +45,6 @@ import com.google.common.collect.OtterMigrateMap;
  */
 public class ConfigClientServiceImpl implements InternalConfigClientService, ArbitrateConfig, InitializingBean {
 
-    private static final String                NID_NAME       = "nid";
     private static final Long                  DEFAULT_PERIOD = 60 * 1000L;
     private static final Logger                logger         = LoggerFactory.getLogger(ConfigClientService.class);
 
@@ -60,6 +58,10 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     public ConfigClientServiceImpl(){
         // 注册一下事件处理
         ArbitrateConfigRegistry.regist(this);
+    }
+
+    public void setNid(Long nid) {
+        this.nid = nid;
     }
 
     public Node currentNode() {
@@ -112,13 +114,9 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     }
 
     public void afterPropertiesSet() throws Exception {
-        // 获取一下nid变量
-        String nid = System.getProperty(NID_NAME);
-        if (StringUtils.isEmpty(nid)) {
-            throw new ConfigException("nid is not set!");
+        if (nid == null || nid <= 0) {
+            throw new ConfigException("请通过 --otter.node.id 或 OTTER_NODE_ID 配置有效的节点 ID");
         }
-
-        this.nid = Long.valueOf(nid);
 
         channelMapping = OtterMigrateMap.makeComputingMap(new Function<Long, Long>() {
 

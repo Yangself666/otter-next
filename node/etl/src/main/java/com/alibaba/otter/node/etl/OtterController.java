@@ -46,7 +46,6 @@ import com.alibaba.otter.shared.arbitrate.ArbitrateEventService;
 import com.alibaba.otter.shared.arbitrate.ArbitrateManageService;
 import com.alibaba.otter.shared.arbitrate.impl.manage.NodeSessionExpired;
 import com.alibaba.otter.shared.arbitrate.impl.zookeeper.ZooKeeperClient;
-import com.alibaba.otter.shared.common.model.config.ConfigException;
 import com.alibaba.otter.shared.common.model.config.enums.StageType;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
@@ -234,14 +233,11 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     private void initNid() {
-        // 获取一下nid变量
-        String nid = System.getProperty(OtterConstants.NID_NAME);
-        if (StringUtils.isEmpty(nid)) {
-            throw new ConfigException("nid is not set!");
-        }
+        // 配置获取和节点注册使用同一个节点身份
+        Long nid = configClientService.currentNode().getId();
         logger.info("INFO ## the nodeId = {}", nid);
         checkNidVaild(nid);
-        arbitrateManageService.nodeEvent().init(Long.valueOf(nid));
+        arbitrateManageService.nodeEvent().init(nid);
         // 添加session expired处理
         NodeSessionExpired sessionExpired = new NodeSessionExpired();
         sessionExpired.setNodeEvent(arbitrateManageService.nodeEvent());
@@ -249,7 +245,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     // 判断本机ip是否和node.getIp()相同
-    private void checkNidVaild(String nid) {
+    private void checkNidVaild(Long nid) {
         Node node = configClientService.currentNode();
         String hostIp = AddressUtils.getHostIp();
         String nodeIp = node.getIp();

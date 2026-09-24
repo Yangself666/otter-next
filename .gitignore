@@ -18,3 +18,7 @@ package-info.java
 docker/data/
 
 node_modules/
+/data/
+/logs/
+/run/
+/config/

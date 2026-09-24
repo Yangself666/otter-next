@@ -41,7 +41,7 @@ import com.alibaba.otter.shared.common.utils.compile.model.JavaFileManagerImpl;
 import com.alibaba.otter.shared.common.utils.compile.model.JavaFileObjectImpl;
 import com.alibaba.otter.shared.common.utils.compile.model.JdkCompilerClassLoader;
 
-public class JdkCompileTask<T> {
+public class JdkCompileTask<T> implements AutoCloseable {
 
     public static final String                  JAVA_EXTENSION = ".java";
 
@@ -74,12 +74,14 @@ public class JdkCompileTask<T> {
                 URLClassLoader urlClassLoader = (URLClassLoader) loader;
                 List<File> path = new ArrayList<File>();
                 for (URL url : urlClassLoader.getURLs()) {
-                    File file = new File(url.getFile());
-                    path.add(file);
+                    // 普通文件交给 JDK，嵌套 JAR 由 JavaFileManagerImpl 提供编译输入
+                    if ("file".equals(url.getProtocol())) {
+                        path.add(new File(url.toURI()));
+                    }
                 }
 
                 fileManager.setLocation(StandardLocation.CLASS_PATH, path);
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -172,5 +174,10 @@ public class JdkCompileTask<T> {
 
     public ClassLoader getClassLoader() {
         return javaFileManager.getClassLoader();
+    }
+
+    @Override
+    public void close() throws IOException {
+        javaFileManager.close();
     }
 }

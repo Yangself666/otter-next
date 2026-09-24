@@ -8,6 +8,7 @@
 | --- | --- |
 | Java 与构建 | JDK 25、Maven 3.9.12、固定插件版本 |
 | 应用框架 | Manager / Node 的 Boot 启动入口与生命周期 |
+| 应用分发 | 两端独立可执行 JAR、外部配置和前台进程 |
 | HTTP | Spring MVC、内嵌 Tomcat 11、健康检查与优雅关闭 |
 | 管理库访问 | MyBatis 3.5.19、MyBatis-Spring 4.1.0、HikariCP |
 | 管理安全 | Spring Security、会话认证、角色权限、CSRF、BCrypt |

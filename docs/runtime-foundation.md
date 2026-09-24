@@ -15,13 +15,13 @@ Manager 与 Node 使用 JDK 25、Spring Boot 4.1.1、Spring Framework 7.0.9 和�
 
 Manager 与 Node 通过同版本发布包部署。RPC 的序列化协议和服务标识随本次升级调整，两端需要一起升级。下载仍由 Node 直接提供，ZooKeeper 保存协调状态。
 
-应用以 `bin/conf/lib` 目录形式分发。Boot 使用普通类路径启动，完整 JDK 提供动态 Java 扩展编译能力。
+应用以 `otter-manager.jar` 与 `otter-node.jar` 分发，使用 `java -jar` 启动。完整 JDK 提供动态 Java 扩展编译能力，启动步骤见 [应用启动与配置](deployment.md)。
 
 ## 管理页面
 
 访问 Manager 根路径即可打开控制台。页面覆盖运行总览、通道、流水线、节点、数据源、数据表、表映射与列分组、Canal 采集配置、告警规则、协调集群、数据矩阵、用户、运行日志和系统设置。复杂同步参数通过 JSON 编辑器维护，基础属性与关联对象使用中文表单。
 
-建议配置顺序：协调集群 → 节点 → 数据源与表 → 采集配置 → 通道与流水线 → 表映射 → 启动通道。节点配置保存后，将对应 ID 写入 Node 的 `conf/nid`。
+建议配置顺序：协调集群 → 节点 → 数据源与表 → 采集配置 → 通道与流水线 → 表映射 → 启动通道。节点配置保存后，通过 `--otter.node.id` 或 `OTTER_NODE_ID` 指定 Node 对应的 ID。
 
 管理员维护配置与用户；操作员查看配置、监控和日志并启停通道。认证采用服务端会话，写请求校验 CSRF Token。数据库与采集密码不返回浏览器，编辑时留空保留已有值。账号删除及角色调整对后续 API 请求立即生效。
 
@@ -37,7 +37,7 @@ ALTER TABLE `USER` MODIFY `PASSWORD` varchar(128) NOT NULL;
 
 ## 配置与启动
 
-两端从类路径与发布目录 `conf/otter.properties` 加载配置，支持 Boot 命令行和环境变量覆盖。
+两端包含默认应用配置，并按 Spring Boot 的规则读取工作目录和 `config/` 下的外部配置，支持命令行和环境变量覆盖。
 
 | 配置 | 作用 |
 | --- | --- |
@@ -51,7 +51,7 @@ ALTER TABLE `USER` MODIFY `PASSWORD` varchar(128) NOT NULL;
 | Node `otter.htdocs.dir` | 文件下载根目录 |
 | `spring.lifecycle.timeout-per-shutdown-phase` | 每个关闭阶段等待时间，默认 30 秒 |
 
-在发布目录执行 `bash bin/startup.sh`。Manager 脚本可接收自定义属性文件路径；Node 脚本读取 `conf/nid`。停止使用 `bash bin/stop.sh`。日志写入发布目录 `logs`。
+两端提供 `start.sh`、`stop.sh`、`restart.sh`、`status.sh` 管理后台进程；也可通过 `java -jar` 前台运行。启动参数与脚本配置见 [应用启动与配置](deployment.md)。业务日志目录默认为工作目录下的 `logs`，可通过 `logging.file.path` 配置。
 
 `GET /actuator/health` 提供应用健康状态。节点通过 Boot 生命周期在 HTTP 服务就绪后注册，关闭时停止任务并释放通信资源。健康状态不代表某条同步任务已完成业务验收。
 
@@ -67,8 +67,8 @@ ALTER TABLE `USER` MODIFY `PASSWORD` varchar(128) NOT NULL;
 - Node 下载、HEAD、Range、缺失路径及目录越界校验
 - 管理员与操作员权限、CSRF 拒绝、删除账号后的会话失效、重复账号校验
 - 列映射与分组保存失败时事务回滚，保留原配置
-- 发布包启动与停止脚本、退出释放端口、动态 Java 扩展编译、MySQL 建表与改表语句映射
+- 可执行 JAR 启动与退出释放端口、外部配置与节点身份参数、动态 Java 扩展编译、MySQL 建表与改表语句映射
 
 H2 验证使用单独适配的临时建库脚本，生产初始化脚本仍面向 MySQL。实际 MySQL binlog → 目标库同步、Oracle 写入、双向同步、跨节点故障恢复和持续运行性能，需要在下一阶段用真实源库与目标库验收。Canal 1.1.5、业务 JDBC 驱动及其配套组件属于后续采集链路升级范围。
 
-现有 jtester/jmockit 测试默认跳过，本轮未新增测试文件。Windows 脚本需要在 Windows 环境进一步执行验证。
+现有 jtester/jmockit 测试默认跳过，本轮未新增测试文件。运行验证在 macOS 完成，其他操作系统需要在对应环境进一步验收。

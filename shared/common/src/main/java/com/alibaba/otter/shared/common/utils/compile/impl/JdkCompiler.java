@@ -47,11 +47,11 @@ public class JdkCompiler implements JavaSourceCompiler {
         try {
 
             final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
-            JdkCompileTask compileTask = new JdkCompileTask(new JdkCompilerClassLoader(this.getClass().getClassLoader()),
-                options);
-            String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
-            Class newClass = compileTask.compile(fullName, javaSource.getSource(), errs);
-            return newClass;
+            try (JdkCompileTask compileTask = new JdkCompileTask(
+                new JdkCompilerClassLoader(this.getClass().getClassLoader()), options)) {
+                String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
+                return compileTask.compile(fullName, javaSource.getSource(), errs);
+            }
         } catch (JdkCompileException ex) {
             DiagnosticCollector<JavaFileObject> diagnostics = ex.getDiagnostics();
             throw new CompileExprException("compile error, source : \n" + javaSource + ", "

@@ -2,7 +2,8 @@
 
 基于 JDK 25、Spring Boot 4、Spring MVC 和内嵌 Tomcat 11 的数据同步管理平台。Manager 提供 Vue 3 管理控制台，Node 执行同步任务并提供文件下载服务。
 
-- [应用配置、管理页面与运行验证](docs/runtime-foundation.md)
+- [应用启动与配置](docs/deployment.md)
+- [管理页面与运行验证](docs/runtime-foundation.md)
 - [后续升级路线](docs/architecture-upgrade-plan.md)
 
 当前已验证管理端与节点启动、通信、配置 API、管理页面和文件下载。真实源库到目标库的数据同步与恢复场景按后续路线继续验收。

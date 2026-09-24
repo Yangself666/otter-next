@@ -13,6 +13,7 @@
 	</bean>
 
 	<bean id="configClientService" class="com.alibaba.otter.node.common.config.impl.ConfigClientServiceImpl" depends-on="zookeeperClient">
+		<property name="nid" value="${otter.node.id:${nid:0}}" />
 		<property name="timeout" value="3600000" /> <!-- 1小时 -->
 	</bean>
 </beans>

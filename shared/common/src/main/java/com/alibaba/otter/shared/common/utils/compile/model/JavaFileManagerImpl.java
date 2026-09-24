@@ -17,14 +17,17 @@
 package com.alibaba.otter.shared.common.utils.compile.model;
 
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -40,6 +43,10 @@ public class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManag
     private final JdkCompilerClassLoader   classLoader;
 
     private final Map<URI, JavaFileObject> fileObjects = new HashMap<URI, JavaFileObject>();
+    private final Map<String, ClassPathJavaFileObject> classPathFiles = new LinkedHashMap<>();
+    private final Map<String, List<JavaFileObject>> classPathPackages = new HashMap<>();
+    private final List<JarFile> openedJars = new ArrayList<>();
+    private boolean classPathLoaded;
 
     public JavaFileManagerImpl(JavaFileManager fileManager, JdkCompilerClassLoader classLoader){
         super(fileManager);
@@ -84,6 +91,9 @@ public class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManag
 
     @Override
     public String inferBinaryName(Location loc, JavaFileObject file) {
+        if (file instanceof ClassPathJavaFileObject dependency) {
+            return dependency.getBinaryName();
+        }
         if (file instanceof JavaFileObjectImpl) {
             return file.getName();
         }
@@ -96,16 +106,19 @@ public class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManag
                                                                                                                  throws IOException {
         Iterable<JavaFileObject> result = super.list(location, packageName, kinds, recurse);
 
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        List<URL> urlList = new ArrayList<URL>();
-        Enumeration<URL> e = contextClassLoader.getResources("com");
-        while (e.hasMoreElements()) {
-            urlList.add(e.nextElement());
-        }
-
         ArrayList<JavaFileObject> files = new ArrayList<JavaFileObject>();
 
         if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
+            loadClassPath();
+            files.addAll(classPathPackages.getOrDefault(packageName, List.of()));
+            if (recurse) {
+                String prefix = packageName.isEmpty() ? "" : packageName + ".";
+                for (var entry : classPathPackages.entrySet()) {
+                    if (!entry.getKey().equals(packageName) && entry.getKey().startsWith(prefix)) {
+                        files.addAll(entry.getValue());
+                    }
+                }
+            }
             for (JavaFileObject file : fileObjects.values()) {
                 if (file.getKind() == Kind.CLASS && file.getName().startsWith(packageName)) {
                     files.add(file);
@@ -126,5 +139,68 @@ public class JavaFileManagerImpl extends ForwardingJavaFileManager<JavaFileManag
         }
 
         return files;
+    }
+
+    @Override
+    public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
+        JavaFileObject file = super.getJavaFileForInput(location, className, kind);
+        if (file == null && location == StandardLocation.CLASS_PATH && kind == Kind.CLASS) {
+            loadClassPath();
+            return classPathFiles.get(className);
+        }
+        return file;
+    }
+
+    private void loadClassPath() throws IOException {
+        if (classPathLoaded) return;
+        // 使用启动类加载器的 JAR 连接，编译过程直接读取依赖而不解压到磁盘
+        for (ClassLoader loader = classLoader.getParent(); loader != null; loader = loader.getParent()) {
+            if (!(loader instanceof URLClassLoader urls)) continue;
+            for (URL url : urls.getURLs()) {
+                if (!"jar".equals(url.getProtocol())) continue;
+                JarURLConnection connection = (JarURLConnection) url.openConnection();
+                connection.setUseCaches(false);
+                JarFile jar = connection.getJarFile();
+                openedJars.add(jar);
+                String prefix = connection.getEntryName() == null ? "" : connection.getEntryName();
+                if (!prefix.isEmpty() && !prefix.endsWith("/")) prefix += "/";
+                var entries = jar.versionedStream().iterator();
+                while (entries.hasNext()) {
+                    var entry = entries.next();
+                    String name = entry.getName();
+                    if (!name.startsWith(prefix) || !name.endsWith(".class")) continue;
+                    String relative = name.substring(prefix.length());
+                    if (relative.startsWith("META-INF/") || relative.equals("module-info.class")) continue;
+                    String binaryName = relative.substring(0, relative.length() - 6).replace('/', '.');
+                    var file = new ClassPathJavaFileObject(binaryName, jar, entry);
+                    if (classPathFiles.putIfAbsent(binaryName, file) == null) {
+                        int dot = binaryName.lastIndexOf('.');
+                        String packageName = dot < 0 ? "" : binaryName.substring(0, dot);
+                        classPathPackages.computeIfAbsent(packageName, key -> new ArrayList<>()).add(file);
+                    }
+                }
+            }
+        }
+        classPathLoaded = true;
+    }
+
+    @Override
+    public void close() throws IOException {
+        IOException failure = null;
+        for (JarFile jar : openedJars) {
+            try {
+                jar.close();
+            } catch (IOException e) {
+                if (failure == null) failure = e;
+                else failure.addSuppressed(e);
+            }
+        }
+        try {
+            super.close();
+        } catch (IOException e) {
+            if (failure == null) failure = e;
+            else failure.addSuppressed(e);
+        }
+        if (failure != null) throw failure;
     }
 }
