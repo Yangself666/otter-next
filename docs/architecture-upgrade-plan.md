@@ -11,7 +11,7 @@
 | HTTP | Spring MVC、内嵌 Tomcat 11、健康检查与优雅关闭 |
 | 管理库访问 | MyBatis 3.5.19、MyBatis-Spring 4.1.0、HikariCP |
 | 管理安全 | Spring Security、会话认证、角色权限、CSRF、BCrypt |
-| 管理界面 | Vue 3、TypeScript、Vite、Maven 集成打包 |
+| 管理界面 | Vue 3、TypeScript、Vite |
 | 节点通信 | Dubbo 3.3.6 直连、Hessian2、模型白名单 |
 | 协调客户端 | ZooKeeper 3.9.6 |
 | 文件传输 | Node HTTP 下载、HEAD、Range、路径约束 |

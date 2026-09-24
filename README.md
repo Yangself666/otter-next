@@ -2,17 +2,6 @@
 
 基于 JDK 25、Spring Boot 4、Spring MVC 和内嵌 Tomcat 11 的数据同步管理平台。Manager 提供 Vue 3 管理控制台，Node 执行同步任务并提供文件下载服务。
 
-构建需要 JDK 25、Maven 3.9.12+、Node.js 24+ 和 npm：
-
-```bash
-export MVN=mvn
-bash lib/install.sh
-"$MVN" -B -ntp clean package -Dmaven.test.skip=true -Denv=release
-```
-
-Maven 自动构建前端并生成 Manager、Node 发布包，输出位于根目录 `target`。
-
-- [构建与发布](docs/jdk25-build.md)
 - [应用配置、管理页面与运行验证](docs/runtime-foundation.md)
 - [后续升级路线](docs/architecture-upgrade-plan.md)
 
